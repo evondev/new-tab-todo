@@ -1,0 +1,8 @@
+{
+  "manifest_version": 3,
+  "name": "New Tab Todo",
+  "version": "1.0.0",
+  "description": "Today / Upcoming todo mỗi khi mở tab mới",
+  "permissions": ["storage"],
+  "chrome_url_overrides": { "newtab": "index.html" }
+}
