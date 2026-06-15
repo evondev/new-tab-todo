@@ -47,7 +47,7 @@ export function buildAlerts(tasks: Task[], reminders: Reminder[]): AlertItem[] {
   const items: AlertItem[] = [];
 
   for (const task of tasks) {
-    if (task.status === "done" || !task.dueDate) continue;
+    if (task.status === "done" || task.status === "backlog" || !task.dueDate) continue;
 
     const diff = daysFromToday(task.dueDate);
     if (diff > TODO_WINDOW_DAYS) continue;

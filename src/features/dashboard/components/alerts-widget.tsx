@@ -37,7 +37,7 @@ export default function AlertsWidget() {
 
   return (
     <WidgetCard
-      title="Nhắc việc"
+      title="Quan trọng"
       icon={
         <img
           src="/icons/bell.png"
