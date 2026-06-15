@@ -31,20 +31,20 @@ export const ACCENT_OPTIONS: AccentOption[] = [
 export interface BackgroundOption {
   id: string;
   label: string;
-  url: string | null; // null = nền trơn (gradient)
+  url: string | null;
+  thumbUrl: string | null;
 }
 
-// Ảnh nằm trong public/background/ (photo-1..8.avif).
 export const BACKGROUND_OPTIONS: BackgroundOption[] = [
-  { id: "photo-1", label: "Ảnh 1", url: "/background/photo-1.avif" },
-  { id: "photo-2", label: "Ảnh 2", url: "/background/photo-2.avif" },
-  { id: "photo-3", label: "Ảnh 3", url: "/background/photo-3.avif" },
-  { id: "photo-4", label: "Ảnh 4", url: "/background/photo-4.avif" },
-  { id: "photo-5", label: "Ảnh 5", url: "/background/photo-5.avif" },
-  { id: "photo-6", label: "Ảnh 6", url: "/background/photo-6.avif" },
-  { id: "photo-7", label: "Ảnh 7", url: "/background/photo-7.avif" },
-  { id: "photo-8", label: "Ảnh 8", url: "/background/photo-8.avif" },
-  { id: "none", label: "Trơn", url: null },
+  { id: "photo-1", label: "Ảnh 1", url: "/background/photo-1.avif", thumbUrl: "/background/thumbs/photo-1.jpg" },
+  { id: "photo-2", label: "Ảnh 2", url: "/background/photo-2.avif", thumbUrl: "/background/thumbs/photo-2.jpg" },
+  { id: "photo-3", label: "Ảnh 3", url: "/background/photo-3.avif", thumbUrl: "/background/thumbs/photo-3.jpg" },
+  { id: "photo-4", label: "Ảnh 4", url: "/background/photo-4.avif", thumbUrl: "/background/thumbs/photo-4.jpg" },
+  { id: "photo-5", label: "Ảnh 5", url: "/background/photo-5.avif", thumbUrl: "/background/thumbs/photo-5.jpg" },
+  { id: "photo-6", label: "Ảnh 6", url: "/background/photo-6.avif", thumbUrl: "/background/thumbs/photo-6.jpg" },
+  { id: "photo-7", label: "Ảnh 7", url: "/background/photo-7.avif", thumbUrl: "/background/thumbs/photo-7.jpg" },
+  { id: "photo-8", label: "Ảnh 8", url: "/background/photo-8.avif", thumbUrl: "/background/thumbs/photo-8.jpg" },
+  { id: "none", label: "Trơn", url: null, thumbUrl: null },
 ];
 
 export function getAccentOption(key: AccentColorKey): AccentOption {

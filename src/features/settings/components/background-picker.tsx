@@ -24,16 +24,15 @@ export default function BackgroundPicker({
               "ring-2 ring-brand ring-offset-2 ring-offset-surface",
           )}
         >
-          {option.url ? (
-            // Thumbnail dùng ảnh thật trong public/backgrounds. Thiếu file thì
-            // ảnh ẩn, để lộ nền xám + nhãn bên dưới.
+          {option.thumbUrl ? (
             <img
-              src={option.url}
+              src={option.thumbUrl}
               alt={option.label}
+              width={240}
+              height={160}
+              loading="lazy"
+              decoding="async"
               className="h-full w-full object-cover"
-              onError={(event) => {
-                event.currentTarget.style.display = "none";
-              }}
             />
           ) : (
             <span className="text-xs font-medium text-muted">

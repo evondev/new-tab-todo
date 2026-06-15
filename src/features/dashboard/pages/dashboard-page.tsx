@@ -1,14 +1,19 @@
+import { BookmarksWidget } from "@/features/bookmarks/components";
 import { Settings } from "lucide-react";
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { Button } from "../../../components/button";
 import { cn } from "../../../utils/cn";
 import { HabitsWidget } from "../../habits/components";
-import NotesWidget from "../../notes/components/notes-widget";
 import { RemindersWidget } from "../../reminders/components";
-import AlertsWidget from "../components/alerts-widget";
-import { SettingsModal } from "../../settings/components";
 import { useSettings } from "../../settings/hooks/use-settings";
 import { TodoWidget } from "../../todo/components";
+import AlertsWidget from "../components/alerts-widget";
+
+const SettingsModal = lazy(() =>
+  import("../../settings/components/settings-modal").then((module) => ({
+    default: module.default,
+  })),
+);
 
 export default function DashboardPage() {
   const { settings, updateSettings } = useSettings();
@@ -59,17 +64,19 @@ export default function DashboardPage() {
 
           <div className="flex flex-col gap-3">
             <AlertsWidget />
-            <NotesWidget />
+            <BookmarksWidget />
           </div>
         </div>
       </div>
 
-      <SettingsModal
-        open={isSettingsOpen}
-        onOpenChange={setIsSettingsOpen}
-        settings={settings}
-        onChange={updateSettings}
-      />
+      <Suspense>
+        <SettingsModal
+          open={isSettingsOpen}
+          onOpenChange={setIsSettingsOpen}
+          settings={settings}
+          onChange={updateSettings}
+        />
+      </Suspense>
     </div>
   );
 }
