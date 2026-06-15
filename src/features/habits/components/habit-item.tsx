@@ -27,7 +27,7 @@ export default function HabitItem({ habit, onToggle, onDelete }: HabitItemProps)
         className={cn(
           "h-5 w-5 rounded-md border",
           isDoneToday &&
-            "border-(--accent) bg-(--accent) text-white hover:bg-(--accent-hover) hover:text-white",
+            "border-(--brand) bg-(--brand) text-white hover:bg-(--brand-hover) hover:text-white",
           !isDoneToday &&
             "border-muted text-transparent hover:bg-transparent hover:text-transparent",
         )}
@@ -49,7 +49,7 @@ export default function HabitItem({ habit, onToggle, onDelete }: HabitItemProps)
             title={day.weekdayLabel}
             className={cn(
               "h-2 w-2 rounded-full",
-              completedSet.has(day.iso) ? "bg-(--accent)" : "bg-border",
+              completedSet.has(day.iso) ? "bg-(--brand)" : "bg-border",
             )}
           />
         ))}

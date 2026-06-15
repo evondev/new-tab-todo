@@ -38,8 +38,8 @@ export function useSettings(): UseSettingsResult {
   useEffect(() => {
     const accent = getAccentOption(settings.accentColor);
     const root = document.documentElement;
-    root.style.setProperty("--accent", accent.base);
-    root.style.setProperty("--accent-hover", accent.hover);
+    root.style.setProperty("--brand", accent.base);
+    root.style.setProperty("--brand-hover", accent.hover);
   }, [settings.accentColor]);
 
   useEffect(() => {

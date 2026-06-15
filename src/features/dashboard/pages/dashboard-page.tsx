@@ -58,13 +58,12 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {isSettingsOpen && (
-        <SettingsModal
-          settings={settings}
-          onChange={updateSettings}
-          onClose={() => setIsSettingsOpen(false)}
-        />
-      )}
+      <SettingsModal
+        open={isSettingsOpen}
+        onOpenChange={setIsSettingsOpen}
+        settings={settings}
+        onChange={updateSettings}
+      />
     </div>
   );
 }

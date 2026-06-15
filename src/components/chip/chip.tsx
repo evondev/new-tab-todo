@@ -20,7 +20,7 @@ export default function Chip({
         "inline-flex cursor-pointer items-center rounded-full px-3 py-1 text-xs font-medium transition-colors",
         "focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400",
         "disabled:cursor-not-allowed disabled:opacity-40",
-        isActive && "bg-(--accent) text-white",
+        isActive && "bg-(--brand) text-white",
         !isActive && "bg-background text-muted hover:text-foreground",
         className,
       )}

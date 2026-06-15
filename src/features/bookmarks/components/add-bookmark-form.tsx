@@ -15,7 +15,7 @@ interface AddBookmarkFormProps {
 }
 
 const INPUT_CLASS =
-  "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-(--accent) focus:outline-none";
+  "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-(--brand) focus:outline-none";
 
 export default function AddBookmarkForm({
   onAdd,

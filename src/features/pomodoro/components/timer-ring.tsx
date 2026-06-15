@@ -14,7 +14,7 @@ export default function TimerRing({
 }: TimerRingProps) {
   const progress = totalSeconds === 0 ? 0 : 1 - remainingSeconds / totalSeconds;
   const degrees = Math.min(360, Math.max(0, progress * 360));
-  const accentColor = phase === "focus" ? "var(--accent)" : "#0ea5e9";
+  const accentColor = phase === "focus" ? "var(--brand)" : "#0ea5e9";
 
   return (
     <div

@@ -19,9 +19,9 @@ export default function BackgroundPicker({
           onClick={() => onChange(option.id)}
           className={cn(
             "relative flex h-20 cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-background ring-1 ring-border-card",
-            "focus:outline-none focus-visible:ring-2 focus-visible:ring-(--accent)",
+            "focus:outline-none focus-visible:ring-2 focus-visible:ring-(--brand)",
             option.id === value &&
-              "ring-2 ring-(--accent) ring-offset-2 ring-offset-surface",
+              "ring-2 ring-(--brand) ring-offset-2 ring-offset-surface",
           )}
         >
           {option.url ? (
