@@ -37,7 +37,7 @@ export default function KanbanColumn({
           Trống
         </p>
       ) : (
-        <ul className="flex flex-col gap-2">
+        <ul className="scrollbar-clean flex max-h-[70vh] min-h-0 flex-1 flex-col gap-2 overflow-y-auto pr-0.5">
           {tasks.map((task) => (
             <TaskCard
               key={task.id}

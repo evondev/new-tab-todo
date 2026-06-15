@@ -1,4 +1,3 @@
-import { Repeat } from "lucide-react";
 import { WidgetCard } from "../../../components/widget-card";
 import { useHabits } from "../hooks/use-habits";
 import AddHabitForm from "./add-habit-form";
@@ -9,7 +8,19 @@ export default function HabitsWidget() {
     useHabits();
 
   return (
-    <WidgetCard title="Thói quen" icon={Repeat} bodyClassName="flex flex-col">
+    <WidgetCard
+      title="Thói quen"
+      icon={
+        <img
+          src="/icons/habit.png"
+          alt=""
+          width={20}
+          height={20}
+          className="h-5 w-5 object-contain"
+        />
+      }
+      bodyClassName="flex flex-col"
+    >
       {isLoading ? (
         <p className="py-6 text-center text-sm text-muted">Đang tải…</p>
       ) : habits.length === 0 ? (

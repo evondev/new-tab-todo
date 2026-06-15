@@ -1,4 +1,4 @@
-import { LayoutGrid, Settings } from "lucide-react";
+import { Settings } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../../../components/button";
 import { cn } from "../../../utils/cn";
@@ -26,7 +26,13 @@ export default function DashboardPage() {
       >
         <header className="mb-3 flex items-center justify-between rounded-full bg-surface p-2 ring-1 ring-border-card">
           <div className="inline-flex items-center gap-2">
-            <LayoutGrid className="h-5 w-5 text-foreground" />
+            <img
+              src="/icons/cube.png"
+              alt=""
+              width={20}
+              height={20}
+              className="h-5 w-5 object-contain"
+            />
             <h1 className="text-lg font-bold text-foreground">
               {settings.boardName}
             </h1>

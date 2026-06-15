@@ -1,10 +1,9 @@
-import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "../../utils/cn";
 
 interface WidgetCardProps {
   title: string;
-  icon: LucideIcon;
+  icon: ReactNode;
   action?: ReactNode;
   className?: string;
   bodyClassName?: string;
@@ -13,7 +12,7 @@ interface WidgetCardProps {
 
 export default function WidgetCard({
   title,
-  icon: Icon,
+  icon,
   action,
   className,
   bodyClassName,
@@ -28,13 +27,13 @@ export default function WidgetCard({
     >
       <header className="mb-4 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <Icon className="h-5 w-5 text-foreground" />
+          {icon}
           <h2 className="text-base font-semibold text-foreground">{title}</h2>
         </div>
         {action}
       </header>
 
-      <div className={cn("flex-1", bodyClassName)}>{children}</div>
+      <div className={cn("min-h-0 flex-1", bodyClassName)}>{children}</div>
     </section>
   );
 }

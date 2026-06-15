@@ -1,4 +1,3 @@
-import { NotebookPen } from "lucide-react";
 import { WidgetCard } from "../../../components/widget-card";
 import { useNotes } from "../hooks/use-notes";
 import { countWords } from "../utils/count-words";
@@ -17,7 +16,15 @@ export default function NotesWidget() {
   return (
     <WidgetCard
       title="Ghi chú"
-      icon={NotebookPen}
+      icon={
+        <img
+          src="/icons/note.png"
+          alt=""
+          width={20}
+          height={20}
+          className="h-5 w-5 object-contain"
+        />
+      }
       action={wordCount}
       className="flex-1"
       bodyClassName="flex"

@@ -1,4 +1,3 @@
-import { BellDot } from "lucide-react";
 import { useMemo } from "react";
 import { WidgetCard } from "../../../components/widget-card";
 import { useReminders } from "../../reminders/hooks/use-reminders";
@@ -37,7 +36,19 @@ export default function AlertsWidget() {
   }
 
   return (
-    <WidgetCard title="Nhắc việc" icon={BellDot} className="flex-1">
+    <WidgetCard
+      title="Nhắc việc"
+      icon={
+        <img
+          src="/icons/bell.png"
+          alt=""
+          width={20}
+          height={20}
+          className="h-5 w-5 object-contain"
+        />
+      }
+      className="flex-1"
+    >
       {isLoading ? (
         <p className="py-6 text-center text-sm text-muted">Đang tải…</p>
       ) : alerts.length === 0 ? (

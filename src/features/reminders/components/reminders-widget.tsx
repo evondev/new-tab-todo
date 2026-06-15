@@ -1,4 +1,4 @@
-import { BellRing, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../../../components/button";
 import { WidgetCard } from "../../../components/widget-card";
@@ -51,7 +51,19 @@ export default function RemindersWidget() {
   );
 
   return (
-    <WidgetCard title="Nhắc lặp lại" icon={BellRing} action={addAction}>
+    <WidgetCard
+      title="Nhắc lặp lại"
+      icon={
+        <img
+          src="/icons/bell.png"
+          alt=""
+          width={20}
+          height={20}
+          className="h-5 w-5 object-contain"
+        />
+      }
+      action={addAction}
+    >
       <div className="mb-3">
         <PersonFilter active={activePerson} onChange={setActivePerson} />
       </div>

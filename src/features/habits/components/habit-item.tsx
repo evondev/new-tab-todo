@@ -44,7 +44,7 @@ export default function HabitItem({
   }
 
   return (
-    <li className="group flex items-center gap-3 rounded-lg px-1 py-2 hover:bg-background">
+    <li className="group flex items-center gap-3 rounded-lg px-1 py-2">
       <IconButton
         icon={Check}
         label={isDoneToday ? "Bỏ tick hôm nay" : "Tick hôm nay"}

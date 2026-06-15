@@ -1,4 +1,3 @@
-import { ListChecks } from "lucide-react";
 import { useState } from "react";
 import { WidgetCard } from "../../../components/widget-card";
 import { useTasks } from "../hooks/use-tasks";
@@ -46,8 +45,17 @@ export default function TodoWidget() {
   return (
     <WidgetCard
       title="Todo"
-      icon={ListChecks}
+      icon={
+        <img
+          src="/icons/todo.png"
+          alt=""
+          width={20}
+          height={20}
+          className="h-5 w-5 object-contain"
+        />
+      }
       className="flex-1"
+      bodyClassName="flex min-h-0 flex-col"
       action={
         <TodoToolbar
           view={view}
