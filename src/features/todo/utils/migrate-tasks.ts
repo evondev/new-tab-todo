@@ -23,6 +23,7 @@ export function migrateTasks(loaded: Task[]): Task[] {
         ...task,
         description: legacy.description ?? "",
         dueTime: legacy.dueTime ?? null,
+        important: (task as unknown as { important?: boolean }).important ?? false,
       };
     }
 
@@ -35,6 +36,7 @@ export function migrateTasks(loaded: Task[]): Task[] {
       dueDate: legacy.dueDate ?? null,
       dueTime: legacy.dueTime ?? null,
       status,
+      important: false,
       createdAt: legacy.createdAt ?? new Date().toISOString(),
       completedAt: legacy.completedAt ?? null,
     };

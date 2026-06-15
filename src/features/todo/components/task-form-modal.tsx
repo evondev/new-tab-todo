@@ -30,6 +30,7 @@ interface TaskFormValues {
   dueDate: string | null;
   dueTime: string | null;
   status: TaskStatus;
+  important: boolean;
 }
 
 interface TaskFormModalProps {
@@ -53,6 +54,7 @@ export default function TaskFormModal({
   const isEdit = Boolean(task);
   const [fields, setFields] = useState(EMPTY_FIELDS);
   const [status, setStatus] = useState<TaskStatus>(DEFAULT_STATUS);
+  const [isImportant, setIsImportant] = useState(false);
   const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
   const [dueTime, setDueTime] = useState("");
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
@@ -65,6 +67,7 @@ export default function TaskFormModal({
     if (task) {
       setFields({ title: task.title, description: task.description });
       setStatus(task.status);
+      setIsImportant(task.important);
       setDueDate(task.dueDate ? parseIsoDate(task.dueDate) : undefined);
       setDueTime(task.dueTime ?? "");
       return;
@@ -72,6 +75,7 @@ export default function TaskFormModal({
 
     setFields(EMPTY_FIELDS);
     setStatus(DEFAULT_STATUS);
+    setIsImportant(false);
     setDueDate(initialDate ? parseIsoDate(initialDate) : undefined);
     setDueTime("");
   }, [open, task, initialDate]);
@@ -79,6 +83,7 @@ export default function TaskFormModal({
   function resetForm(): void {
     setFields(EMPTY_FIELDS);
     setStatus(DEFAULT_STATUS);
+    setIsImportant(false);
     setDueDate(undefined);
     setDueTime("");
   }
@@ -114,6 +119,7 @@ export default function TaskFormModal({
       dueDate: dueDate ? formatIsoDate(dueDate) : null,
       dueTime: dueDate && dueTime ? dueTime : null,
       status,
+      important: isImportant,
     });
     resetForm();
     onOpenChange(false);
@@ -174,6 +180,23 @@ export default function TaskFormModal({
                 );
               })}
             </div>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Label>Đánh dấu quan trọng</Label>
+            <button
+              type="button"
+              onClick={() => setIsImportant((prev) => !prev)}
+              className={cn(
+                "inline-flex w-fit cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-colors",
+                isImportant
+                  ? "border-orange-300 bg-orange-50 text-orange-600 dark:border-orange-700 dark:bg-orange-950 dark:text-orange-400"
+                  : "border-input text-muted-foreground hover:text-foreground",
+              )}
+            >
+              <img src="/icons/fire.png" alt="" width={16} height={16} className="h-4 w-4 object-contain" />
+              Quan trọng
+            </button>
           </div>
 
           <div className="flex flex-col gap-2">

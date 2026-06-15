@@ -32,6 +32,7 @@ export default function AlertsWidget() {
       dueDate: task.dueDate,
       dueTime: task.dueTime,
       status: "done",
+      important: task.important,
     });
   }
 

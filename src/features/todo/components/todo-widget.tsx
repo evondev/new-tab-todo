@@ -36,7 +36,7 @@ export default function TodoWidget() {
 
   function handleSubmit(values: Parameters<typeof addTask>[0]): void {
     if (editingTask) {
-      editTask(editingTask.id, { ...values, status: values.status ?? "backlog" });
+      editTask(editingTask.id, { ...values, status: values.status ?? "backlog", important: values.important ?? false });
     } else {
       addTask(values);
     }

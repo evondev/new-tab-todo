@@ -12,6 +12,7 @@ interface AddTaskInput {
   dueDate: string | null;
   dueTime: string | null;
   status?: TaskStatus;
+  important?: boolean;
 }
 
 interface EditTaskInput {
@@ -20,6 +21,7 @@ interface EditTaskInput {
   dueDate: string | null;
   dueTime: string | null;
   status: TaskStatus;
+  important: boolean;
 }
 
 type TasksByStatus = Record<TaskStatus, Task[]>;
@@ -74,6 +76,7 @@ export function useTasks(): UseTasksResult {
     dueDate,
     dueTime,
     status = "backlog",
+    important = false,
   }: AddTaskInput): void {
     const newTask: Task = {
       id: crypto.randomUUID(),
@@ -82,6 +85,7 @@ export function useTasks(): UseTasksResult {
       dueDate,
       dueTime: dueDate ? dueTime : null,
       status,
+      important,
       createdAt: new Date().toISOString(),
       completedAt: status === "done" ? new Date().toISOString() : null,
     };
@@ -91,7 +95,7 @@ export function useTasks(): UseTasksResult {
 
   function editTask(
     id: string,
-    { title, description, dueDate, dueTime, status }: EditTaskInput,
+    { title, description, dueDate, dueTime, status, important }: EditTaskInput,
   ): void {
     persist(
       tasks.map((task) => {
@@ -104,6 +108,7 @@ export function useTasks(): UseTasksResult {
           dueDate,
           dueTime: dueDate ? dueTime : null,
           status,
+          important,
           completedAt:
             status === "done"
               ? (task.completedAt ?? new Date().toISOString())
