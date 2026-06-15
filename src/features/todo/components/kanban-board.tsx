@@ -18,7 +18,7 @@ export default function KanbanBoard({
   onDelete,
 }: KanbanBoardProps) {
   return (
-    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+    <div className="scrollbar-clean flex gap-3 overflow-x-auto pb-2">
       {KANBAN_COLUMNS.map((column) => (
         <KanbanColumn
           key={column.key}

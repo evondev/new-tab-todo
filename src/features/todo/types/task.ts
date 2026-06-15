@@ -7,6 +7,7 @@ export interface Task {
   title: string;
   description: string;
   dueDate: string | null; // ISO "YYYY-MM-DD", null = không gắn ngày
+  dueTime: string | null; // "HH:mm", null = không gắn giờ
   status: TaskStatus;
   createdAt: string; // ISO datetime
   completedAt: string | null;

@@ -23,8 +23,14 @@ export function useLocalState<T>(
       setIsLoading(false);
     });
 
+    // Đồng bộ khi instance khác (widget khác) cùng key save dữ liệu.
+    const unsubscribe = storageRef.current.subscribe((next) => {
+      if (isMounted) setValue(next);
+    });
+
     return () => {
       isMounted = false;
+      unsubscribe();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

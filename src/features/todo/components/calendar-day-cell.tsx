@@ -32,7 +32,7 @@ export default function CalendarDayCell({
       <span
         className={cn(
           "inline-flex h-6 w-6 items-center justify-center self-start rounded-full text-xs font-medium text-foreground",
-          cell.isToday && "bg-(--brand) text-white",
+          cell.isToday && "bg-brand text-white",
         )}
       >
         {cell.dayNumber}
@@ -48,6 +48,9 @@ export default function CalendarDayCell({
               STATUS_CHIP_CLASS[task.status],
             )}
           >
+            {task.dueTime && (
+              <span className="font-semibold">{task.dueTime} </span>
+            )}
             {task.title}
           </span>
         ))}

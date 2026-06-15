@@ -2,13 +2,13 @@ import { LayoutGrid, Settings } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../../../components/button";
 import { cn } from "../../../utils/cn";
-import { TodoWidget } from "../../todo/components";
-import { PomodoroWidget } from "../../pomodoro/components";
+import { HabitsWidget } from "../../habits/components";
 import NotesWidget from "../../notes/components/notes-widget";
 import { RemindersWidget } from "../../reminders/components";
-import { HabitsWidget } from "../../habits/components";
+import AlertsWidget from "../components/alerts-widget";
 import { SettingsModal } from "../../settings/components";
 import { useSettings } from "../../settings/hooks/use-settings";
+import { TodoWidget } from "../../todo/components";
 
 export default function DashboardPage() {
   const { settings, updateSettings } = useSettings();
@@ -24,8 +24,8 @@ export default function DashboardPage() {
           isPlainBackground ? "bg-surface/90" : "bg-surface/55",
         )}
       >
-        <header className="mb-3 flex items-center justify-between">
-          <div className="inline-flex items-center gap-2 rounded-full bg-surface px-4 py-2 ring-1 ring-border-card">
+        <header className="mb-3 flex items-center justify-between rounded-full bg-surface p-2 ring-1 ring-border-card">
+          <div className="inline-flex items-center gap-2">
             <LayoutGrid className="h-5 w-5 text-foreground" />
             <h1 className="text-lg font-bold text-foreground">
               {settings.boardName}
@@ -52,7 +52,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="flex flex-col gap-3">
-            <PomodoroWidget />
+            <AlertsWidget />
             <NotesWidget />
           </div>
         </div>

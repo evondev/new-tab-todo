@@ -5,6 +5,7 @@ interface LegacyTaskShape {
   title?: string;
   description?: string;
   dueDate?: string | null;
+  dueTime?: string | null;
   isDone?: boolean;
   status?: TaskStatus;
   createdAt?: string;
@@ -21,6 +22,7 @@ export function migrateTasks(loaded: Task[]): Task[] {
       return {
         ...task,
         description: legacy.description ?? "",
+        dueTime: legacy.dueTime ?? null,
       };
     }
 
@@ -31,6 +33,7 @@ export function migrateTasks(loaded: Task[]): Task[] {
       title: legacy.title ?? "",
       description: legacy.description ?? "",
       dueDate: legacy.dueDate ?? null,
+      dueTime: legacy.dueTime ?? null,
       status,
       createdAt: legacy.createdAt ?? new Date().toISOString(),
       completedAt: legacy.completedAt ?? null,

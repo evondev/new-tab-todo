@@ -27,7 +27,7 @@ export default function NotesWidget() {
         onChange={handleChange}
         disabled={isLoading}
         placeholder="Viết ghi chú của bạn ở đây…"
-        className="min-h-[200px] w-full flex-1 resize-none rounded-lg bg-transparent text-sm leading-relaxed text-foreground placeholder:text-muted focus:outline-none"
+        className="min-h-50 w-full flex-1 resize-none rounded-lg bg-transparent text-sm leading-relaxed text-foreground placeholder:text-muted focus:outline-none"
       />
     </WidgetCard>
   );

@@ -21,7 +21,7 @@ export default function KanbanColumn({
   onDelete,
 }: KanbanColumnProps) {
   return (
-    <div className="flex min-w-0 flex-col rounded-xl bg-background p-2.5">
+    <div className="flex min-w-64 flex-1 flex-col rounded-xl bg-background p-2.5">
       <div className="mb-2 flex items-center justify-between px-1">
         <div className="flex items-center gap-2">
           <span className={cn("h-2 w-2 rounded-full", column.dotClassName)} />

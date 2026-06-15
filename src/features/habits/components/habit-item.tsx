@@ -52,7 +52,7 @@ export default function HabitItem({
         className={cn(
           "h-5 w-5 rounded-md border",
           isDoneToday &&
-            "border-(--brand) bg-(--brand) text-white hover:bg-(--brand-hover) hover:text-white",
+            "border-brand bg-brand text-white hover:bg-brand-hover hover:text-white",
           !isDoneToday &&
             "border-muted text-transparent hover:bg-transparent hover:text-transparent",
         )}
@@ -71,8 +71,9 @@ export default function HabitItem({
         <button
           type="button"
           onDoubleClick={startEdit}
+          title={habit.name}
           className={cn(
-            "flex-1 cursor-text truncate text-left text-sm font-medium text-foreground",
+            "min-w-0 flex-1 cursor-text truncate text-left text-sm font-medium text-foreground",
             isDoneToday && "text-muted line-through",
           )}
         >
@@ -87,7 +88,7 @@ export default function HabitItem({
             title={day.weekdayLabel}
             className={cn(
               "h-2 w-2 rounded-full",
-              completedSet.has(day.iso) ? "bg-(--brand)" : "bg-border",
+              completedSet.has(day.iso) ? "bg-brand" : "bg-border",
             )}
           />
         ))}

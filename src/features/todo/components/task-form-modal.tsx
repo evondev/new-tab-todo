@@ -28,6 +28,7 @@ interface TaskFormValues {
   title: string;
   description: string;
   dueDate: string | null;
+  dueTime: string | null;
   status: TaskStatus;
 }
 
@@ -53,6 +54,7 @@ export default function TaskFormModal({
   const [fields, setFields] = useState(EMPTY_FIELDS);
   const [status, setStatus] = useState<TaskStatus>(DEFAULT_STATUS);
   const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
+  const [dueTime, setDueTime] = useState("");
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
   // Khi mở modal: edit thì điền từ task, tạo mới thì để trống (điền sẵn ngày
@@ -64,18 +66,21 @@ export default function TaskFormModal({
       setFields({ title: task.title, description: task.description });
       setStatus(task.status);
       setDueDate(task.dueDate ? parseIsoDate(task.dueDate) : undefined);
+      setDueTime(task.dueTime ?? "");
       return;
     }
 
     setFields(EMPTY_FIELDS);
     setStatus(DEFAULT_STATUS);
     setDueDate(initialDate ? parseIsoDate(initialDate) : undefined);
+    setDueTime("");
   }, [open, task, initialDate]);
 
   function resetForm(): void {
     setFields(EMPTY_FIELDS);
     setStatus(DEFAULT_STATUS);
     setDueDate(undefined);
+    setDueTime("");
   }
 
   function handleOpenChange(nextOpen: boolean): void {
@@ -107,6 +112,7 @@ export default function TaskFormModal({
       title: fields.title,
       description: fields.description,
       dueDate: dueDate ? formatIsoDate(dueDate) : null,
+      dueTime: dueDate && dueTime ? dueTime : null,
       status,
     });
     resetForm();
@@ -171,33 +177,52 @@ export default function TaskFormModal({
           </div>
 
           <div className="flex flex-col gap-2">
-            <Label>Ngày hết hạn</Label>
-            <Popover open={isDatePickerOpen} onOpenChange={setIsDatePickerOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className={cn(
-                    "justify-start text-left font-normal",
-                    !dueDate && "text-muted-foreground",
-                  )}
-                >
-                  <CalendarIcon />
-                  {dueDate
-                    ? format(dueDate, "EEEE, dd/MM/yyyy", { locale: vi })
-                    : "Chọn ngày (tuỳ chọn)"}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent align="start">
-                <Calendar
-                  mode="single"
-                  selected={dueDate}
-                  onSelect={handleDateSelect}
-                  locale={vi}
-                  autoFocus
-                />
-              </PopoverContent>
-            </Popover>
+            <Label>Ngày &amp; giờ hết hạn</Label>
+            <div className="flex gap-2">
+              <Popover
+                open={isDatePickerOpen}
+                onOpenChange={setIsDatePickerOpen}
+              >
+                <PopoverTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className={cn(
+                      "flex-1 justify-start text-left font-normal",
+                      !dueDate && "text-muted-foreground",
+                    )}
+                  >
+                    <CalendarIcon />
+                    {dueDate
+                      ? format(dueDate, "EEEE, dd/MM/yyyy", { locale: vi })
+                      : "Chọn ngày (tuỳ chọn)"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent align="start">
+                  <Calendar
+                    mode="single"
+                    selected={dueDate}
+                    onSelect={handleDateSelect}
+                    locale={vi}
+                    autoFocus
+                  />
+                </PopoverContent>
+              </Popover>
+
+              <Input
+                type="time"
+                aria-label="Giờ hết hạn"
+                value={dueTime}
+                onChange={(event) => setDueTime(event.target.value)}
+                disabled={!dueDate}
+                className="w-32"
+              />
+            </div>
+            {dueDate && (
+              <p className="text-xs text-muted-foreground">
+                Có giờ thì Nhắc việc sẽ hiển thị giờ cụ thể.
+              </p>
+            )}
           </div>
 
           <DialogFooter className="mt-2">

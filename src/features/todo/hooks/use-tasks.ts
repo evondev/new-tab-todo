@@ -10,6 +10,7 @@ interface AddTaskInput {
   title: string;
   description: string;
   dueDate: string | null;
+  dueTime: string | null;
   status?: TaskStatus;
 }
 
@@ -17,6 +18,7 @@ interface EditTaskInput {
   title: string;
   description: string;
   dueDate: string | null;
+  dueTime: string | null;
   status: TaskStatus;
 }
 
@@ -70,6 +72,7 @@ export function useTasks(): UseTasksResult {
     title,
     description,
     dueDate,
+    dueTime,
     status = "backlog",
   }: AddTaskInput): void {
     const newTask: Task = {
@@ -77,6 +80,7 @@ export function useTasks(): UseTasksResult {
       title: title.trim(),
       description: description.trim(),
       dueDate,
+      dueTime: dueDate ? dueTime : null,
       status,
       createdAt: new Date().toISOString(),
       completedAt: status === "done" ? new Date().toISOString() : null,
@@ -87,7 +91,7 @@ export function useTasks(): UseTasksResult {
 
   function editTask(
     id: string,
-    { title, description, dueDate, status }: EditTaskInput,
+    { title, description, dueDate, dueTime, status }: EditTaskInput,
   ): void {
     persist(
       tasks.map((task) => {
@@ -98,6 +102,7 @@ export function useTasks(): UseTasksResult {
           title: title.trim(),
           description: description.trim(),
           dueDate,
+          dueTime: dueDate ? dueTime : null,
           status,
           completedAt:
             status === "done"

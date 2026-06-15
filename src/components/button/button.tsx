@@ -10,7 +10,7 @@ interface ButtonProps extends ComponentProps<"button"> {
 function getVariantClasses(variant: ButtonVariant): string {
   return cn(
     variant === "primary" &&
-      "bg-(--brand) text-white hover:bg-(--brand-hover) shadow-sm",
+      "bg-brand text-white hover:bg-brand-hover shadow-sm",
     variant === "ghost" &&
       "bg-transparent text-muted hover:bg-background hover:text-foreground",
     variant === "danger" && "bg-transparent text-muted hover:text-rose-500",

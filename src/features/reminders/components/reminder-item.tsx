@@ -44,7 +44,7 @@ export default function ReminderItem({
           isDoneToday &&
             "border-emerald-500 bg-emerald-500 text-white disabled:opacity-100",
           canComplete &&
-            "border-(--brand) text-(--brand) hover:bg-(--brand) hover:text-white",
+            "border-brand text-brand hover:bg-brand hover:text-white",
           !isDoneToday &&
             !canComplete &&
             "border-muted text-transparent disabled:hover:bg-transparent",
@@ -52,7 +52,7 @@ export default function ReminderItem({
       />
 
       <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
+        <div className="flex min-w-0 items-center gap-2">
           <span
             className={cn(
               "shrink-0 rounded px-1.5 py-0.5 text-[10px] font-semibold",
@@ -62,8 +62,9 @@ export default function ReminderItem({
             {person.label}
           </span>
           <p
+            title={reminder.title}
             className={cn(
-              "truncate text-sm font-medium text-foreground",
+              "min-w-0 flex-1 truncate text-sm font-medium text-foreground",
               isDoneToday && "text-muted line-through",
             )}
           >
