@@ -2,6 +2,7 @@ import {
   CalendarClock,
   ChevronLeft,
   ChevronRight,
+  Flame,
   Pencil,
   Trash2,
 } from "lucide-react";
@@ -34,16 +35,11 @@ export default function TaskCard({
   const canMoveNext = statusIndex < TASK_STATUS_ORDER.length - 1;
 
   return (
-    <li className={cn(
-      "rounded-xl bg-surface p-3",
-      task.important
-        ? "border-2 border-[var(--brand)]"
-        : "ring-1 ring-border-card",
-    )}>
+    <li className="rounded-xl bg-surface p-3 ring-1 ring-border-card">
       <div className="flex items-start gap-1.5">
         <p className="flex-1 text-sm font-medium text-foreground">{task.title}</p>
         {task.important && (
-          <img src="/icons/fire.png" alt="Quan trọng" width={20} height={20} className="h-5 w-5 shrink-0 object-contain" />
+          <Flame className="h-4 w-4 shrink-0 fill-orange-500 text-orange-500" />
         )}
       </div>
 

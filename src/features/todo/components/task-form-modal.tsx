@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Flame } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -194,7 +194,7 @@ export default function TaskFormModal({
                   : "border-input text-muted-foreground hover:text-foreground",
               )}
             >
-              <img src="/icons/fire.png" alt="" width={16} height={16} className="h-4 w-4 object-contain" />
+              <Flame className="h-4 w-4 fill-orange-500 text-orange-500" />
               Quan trọng
             </button>
           </div>

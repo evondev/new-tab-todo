@@ -29,7 +29,7 @@ export default function DashboardPage() {
           isPlainBackground ? "bg-surface/90" : "bg-surface/55",
         )}
       >
-        <header className="mb-3 flex items-center justify-between rounded-full bg-surface p-2 ring-1 ring-border-card">
+        <header className="mb-3 flex items-center justify-between rounded-full bg-surface p-2 px-4 ring-1 ring-border-card">
           <div className="inline-flex items-center gap-2">
             <h1 className="text-lg font-bold text-foreground">
               {settings.boardName}
