@@ -1,4 +1,10 @@
-import { CalendarClock, ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
+import {
+  CalendarClock,
+  ChevronLeft,
+  ChevronRight,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 import { IconButton } from "../../../components/icon-button";
 import { cn } from "../../../utils/cn";
 import { TASK_STATUS_ORDER } from "../constants/kanban-columns";
@@ -10,10 +16,16 @@ type MoveDirection = "prev" | "next";
 interface TaskCardProps {
   task: Task;
   onMove: (id: string, direction: MoveDirection) => void;
+  onEdit: (task: Task) => void;
   onDelete: (id: string) => void;
 }
 
-export default function TaskCard({ task, onMove, onDelete }: TaskCardProps) {
+export default function TaskCard({
+  task,
+  onMove,
+  onEdit,
+  onDelete,
+}: TaskCardProps) {
   const statusIndex = TASK_STATUS_ORDER.indexOf(task.status);
   const canMovePrev = statusIndex > 0;
   const canMoveNext = statusIndex < TASK_STATUS_ORDER.length - 1;
@@ -47,6 +59,11 @@ export default function TaskCard({ task, onMove, onDelete }: TaskCardProps) {
         )}
 
         <div className="flex items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+          <IconButton
+            icon={Pencil}
+            label="Sửa task"
+            onClick={() => onEdit(task)}
+          />
           <IconButton
             icon={ChevronLeft}
             label="Chuyển sang cột trước"

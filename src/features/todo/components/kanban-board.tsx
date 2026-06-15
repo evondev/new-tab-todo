@@ -7,12 +7,14 @@ type MoveDirection = "prev" | "next";
 interface KanbanBoardProps {
   tasksByStatus: Record<TaskStatus, Task[]>;
   onMove: (id: string, direction: MoveDirection) => void;
+  onEdit: (task: Task) => void;
   onDelete: (id: string) => void;
 }
 
 export default function KanbanBoard({
   tasksByStatus,
   onMove,
+  onEdit,
   onDelete,
 }: KanbanBoardProps) {
   return (
@@ -23,6 +25,7 @@ export default function KanbanBoard({
           column={column}
           tasks={tasksByStatus[column.key]}
           onMove={onMove}
+          onEdit={onEdit}
           onDelete={onDelete}
         />
       ))}

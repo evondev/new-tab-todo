@@ -5,7 +5,7 @@ import { cn } from "../../../utils/cn";
 import { TodoWidget } from "../../todo/components";
 import { PomodoroWidget } from "../../pomodoro/components";
 import NotesWidget from "../../notes/components/notes-widget";
-import { BookmarksWidget } from "../../bookmarks/components";
+import { RemindersWidget } from "../../reminders/components";
 import { HabitsWidget } from "../../habits/components";
 import { SettingsModal } from "../../settings/components";
 import { useSettings } from "../../settings/hooks/use-settings";
@@ -46,7 +46,7 @@ export default function DashboardPage() {
             <TodoWidget />
 
             <div className="grid gap-3 sm:grid-cols-2">
-              <BookmarksWidget />
+              <RemindersWidget />
               <HabitsWidget />
             </div>
           </div>

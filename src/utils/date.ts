@@ -23,3 +23,15 @@ export function parseIsoDate(iso: string): Date {
 
   return new Date(year, month - 1, day);
 }
+
+export function addMonths(date: Date, amount: number): Date {
+  return new Date(date.getFullYear(), date.getMonth() + amount, date.getDate());
+}
+
+// Số ngày từ hôm nay tới ngày iso (dương = tương lai, âm = quá khứ).
+export function daysFromToday(iso: string): number {
+  const today = toDateOnly(new Date()).getTime();
+  const target = parseIsoDate(iso).getTime();
+
+  return Math.round((target - today) / 86_400_000);
+}

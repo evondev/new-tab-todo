@@ -22,7 +22,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/utils/cn";
 import { formatIsoDate, parseIsoDate } from "@/utils/date";
 import { KANBAN_COLUMNS } from "../constants/kanban-columns";
-import type { TaskStatus } from "../types/task";
+import type { Task, TaskStatus } from "../types/task";
 
 interface TaskFormValues {
   title: string;
@@ -36,6 +36,7 @@ interface TaskFormModalProps {
   onOpenChange: (open: boolean) => void;
   onSubmit: (values: TaskFormValues) => void;
   initialDate?: string | null;
+  task?: Task | null;
 }
 
 const EMPTY_FIELDS = { title: "", description: "" };
@@ -46,18 +47,30 @@ export default function TaskFormModal({
   onOpenChange,
   onSubmit,
   initialDate,
+  task,
 }: TaskFormModalProps) {
+  const isEdit = Boolean(task);
   const [fields, setFields] = useState(EMPTY_FIELDS);
   const [status, setStatus] = useState<TaskStatus>(DEFAULT_STATUS);
   const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
-  // Khi mở modal, điền sẵn ngày nếu được truyền vào (bấm ô ngày trong lịch).
+  // Khi mở modal: edit thì điền từ task, tạo mới thì để trống (điền sẵn ngày
+  // nếu bấm ô ngày trong lịch).
   useEffect(() => {
-    if (open) {
-      setDueDate(initialDate ? parseIsoDate(initialDate) : undefined);
+    if (!open) return;
+
+    if (task) {
+      setFields({ title: task.title, description: task.description });
+      setStatus(task.status);
+      setDueDate(task.dueDate ? parseIsoDate(task.dueDate) : undefined);
+      return;
     }
-  }, [open, initialDate]);
+
+    setFields(EMPTY_FIELDS);
+    setStatus(DEFAULT_STATUS);
+    setDueDate(initialDate ? parseIsoDate(initialDate) : undefined);
+  }, [open, task, initialDate]);
 
   function resetForm(): void {
     setFields(EMPTY_FIELDS);
@@ -104,7 +117,7 @@ export default function TaskFormModal({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Thêm task mới</DialogTitle>
+          <DialogTitle>{isEdit ? "Sửa task" : "Thêm task mới"}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -196,7 +209,7 @@ export default function TaskFormModal({
               Huỷ
             </Button>
             <Button type="submit" disabled={!fields.title.trim()}>
-              Thêm task
+              {isEdit ? "Lưu" : "Thêm task"}
             </Button>
           </DialogFooter>
         </form>

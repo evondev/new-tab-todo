@@ -8,6 +8,7 @@ interface UseHabitsResult {
   habits: Habit[];
   isLoading: boolean;
   addHabit: (name: string) => void;
+  renameHabit: (id: string, name: string) => void;
   toggleToday: (id: string) => void;
   deleteHabit: (id: string) => void;
 }
@@ -25,6 +26,17 @@ export function useHabits(): UseHabitsResult {
     };
 
     persist([...habits, newHabit]);
+  }
+
+  function renameHabit(id: string, name: string): void {
+    const trimmed = name.trim();
+    if (!trimmed) return;
+
+    persist(
+      habits.map((habit) =>
+        habit.id === id ? { ...habit, name: trimmed } : habit,
+      ),
+    );
   }
 
   function toggleToday(id: string): void {
@@ -48,5 +60,12 @@ export function useHabits(): UseHabitsResult {
     persist(habits.filter((habit) => habit.id !== id));
   }
 
-  return { habits, isLoading, addHabit, toggleToday, deleteHabit };
+  return {
+    habits,
+    isLoading,
+    addHabit,
+    renameHabit,
+    toggleToday,
+    deleteHabit,
+  };
 }

@@ -9,6 +9,7 @@ interface KanbanColumnProps {
   column: KanbanColumnConfig;
   tasks: Task[];
   onMove: (id: string, direction: MoveDirection) => void;
+  onEdit: (task: Task) => void;
   onDelete: (id: string) => void;
 }
 
@@ -16,6 +17,7 @@ export default function KanbanColumn({
   column,
   tasks,
   onMove,
+  onEdit,
   onDelete,
 }: KanbanColumnProps) {
   return (
@@ -41,6 +43,7 @@ export default function KanbanColumn({
               key={task.id}
               task={task}
               onMove={onMove}
+              onEdit={onEdit}
               onDelete={onDelete}
             />
           ))}

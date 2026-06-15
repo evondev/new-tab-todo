@@ -5,7 +5,8 @@ import AddHabitForm from "./add-habit-form";
 import HabitItem from "./habit-item";
 
 export default function HabitsWidget() {
-  const { habits, isLoading, addHabit, toggleToday, deleteHabit } = useHabits();
+  const { habits, isLoading, addHabit, renameHabit, toggleToday, deleteHabit } =
+    useHabits();
 
   return (
     <WidgetCard title="Thói quen" icon={Repeat} bodyClassName="flex flex-col">
@@ -22,6 +23,7 @@ export default function HabitsWidget() {
               key={habit.id}
               habit={habit}
               onToggle={toggleToday}
+              onRename={renameHabit}
               onDelete={deleteHabit}
             />
           ))}

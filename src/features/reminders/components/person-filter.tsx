@@ -1,16 +1,13 @@
 import { Chip } from "../../../components/chip";
-import { CATEGORY_OPTIONS } from "../constants/categories";
-import type { BookmarkCategory } from "../types/bookmark";
+import { PERSON_OPTIONS } from "../constants/reminder-options";
+import type { ReminderPerson } from "../types/reminder";
 
-interface CategoryFilterProps {
-  active: BookmarkCategory | null;
-  onChange: (category: BookmarkCategory | null) => void;
+interface PersonFilterProps {
+  active: ReminderPerson | null;
+  onChange: (person: ReminderPerson | null) => void;
 }
 
-export default function CategoryFilter({
-  active,
-  onChange,
-}: CategoryFilterProps) {
+export default function PersonFilter({ active, onChange }: PersonFilterProps) {
   return (
     <div className="flex flex-wrap gap-1.5">
       <Chip
@@ -18,7 +15,7 @@ export default function CategoryFilter({
         isActive={active === null}
         onClick={() => onChange(null)}
       />
-      {CATEGORY_OPTIONS.map((option) => (
+      {PERSON_OPTIONS.map((option) => (
         <Chip
           key={option.key}
           label={option.label}

@@ -13,6 +13,13 @@ interface AddTaskInput {
   status?: TaskStatus;
 }
 
+interface EditTaskInput {
+  title: string;
+  description: string;
+  dueDate: string | null;
+  status: TaskStatus;
+}
+
 type TasksByStatus = Record<TaskStatus, Task[]>;
 
 interface UseTasksResult {
@@ -20,6 +27,7 @@ interface UseTasksResult {
   tasksByStatus: TasksByStatus;
   isLoading: boolean;
   addTask: (input: AddTaskInput) => void;
+  editTask: (id: string, input: EditTaskInput) => void;
   moveTask: (id: string, direction: MoveDirection) => void;
   deleteTask: (id: string) => void;
 }
@@ -77,6 +85,29 @@ export function useTasks(): UseTasksResult {
     persist([newTask, ...tasks]);
   }
 
+  function editTask(
+    id: string,
+    { title, description, dueDate, status }: EditTaskInput,
+  ): void {
+    persist(
+      tasks.map((task) => {
+        if (task.id !== id) return task;
+
+        return {
+          ...task,
+          title: title.trim(),
+          description: description.trim(),
+          dueDate,
+          status,
+          completedAt:
+            status === "done"
+              ? (task.completedAt ?? new Date().toISOString())
+              : null,
+        };
+      }),
+    );
+  }
+
   function moveTask(id: string, direction: MoveDirection): void {
     const nextTasks = tasks.map((task) => {
       if (task.id !== id) return task;
@@ -103,6 +134,7 @@ export function useTasks(): UseTasksResult {
     tasksByStatus: groupByStatus(tasks),
     isLoading,
     addTask,
+    editTask,
     moveTask,
     deleteTask,
   };

@@ -1,4 +1,5 @@
-import { Check, Flame, Trash2 } from "lucide-react";
+import { Check, Flame, Pencil, Trash2 } from "lucide-react";
+import { useState } from "react";
 import { IconButton } from "../../../components/icon-button";
 import { cn } from "../../../utils/cn";
 import { getTodayIso } from "../../../utils/date";
@@ -9,14 +10,38 @@ import { calcStreak } from "../utils/streak";
 interface HabitItemProps {
   habit: Habit;
   onToggle: (id: string) => void;
+  onRename: (id: string, name: string) => void;
   onDelete: (id: string) => void;
 }
 
-export default function HabitItem({ habit, onToggle, onDelete }: HabitItemProps) {
+export default function HabitItem({
+  habit,
+  onToggle,
+  onRename,
+  onDelete,
+}: HabitItemProps) {
   const completedSet = new Set(habit.completedDates);
   const isDoneToday = completedSet.has(getTodayIso());
   const streak = calcStreak(habit.completedDates);
   const last7Days = getLast7Days();
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [draft, setDraft] = useState(habit.name);
+
+  function startEdit(): void {
+    setDraft(habit.name);
+    setIsEditing(true);
+  }
+
+  function commit(): void {
+    onRename(habit.id, draft);
+    setIsEditing(false);
+  }
+
+  function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>): void {
+    if (event.key === "Enter") commit();
+    if (event.key === "Escape") setIsEditing(false);
+  }
 
   return (
     <li className="group flex items-center gap-3 rounded-lg px-1 py-2 hover:bg-background">
@@ -33,14 +58,27 @@ export default function HabitItem({ habit, onToggle, onDelete }: HabitItemProps)
         )}
       />
 
-      <span
-        className={cn(
-          "flex-1 truncate text-sm font-medium text-foreground",
-          isDoneToday && "text-muted line-through",
-        )}
-      >
-        {habit.name}
-      </span>
+      {isEditing ? (
+        <input
+          value={draft}
+          onChange={(event) => setDraft(event.target.value)}
+          onBlur={commit}
+          onKeyDown={handleKeyDown}
+          autoFocus
+          className="flex-1 rounded-md border border-input bg-background px-2 py-1 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+        />
+      ) : (
+        <button
+          type="button"
+          onDoubleClick={startEdit}
+          className={cn(
+            "flex-1 cursor-text truncate text-left text-sm font-medium text-foreground",
+            isDoneToday && "text-muted line-through",
+          )}
+        >
+          {habit.name}
+        </button>
+      )}
 
       <div className="flex items-center gap-1">
         {last7Days.map((day) => (
@@ -60,12 +98,20 @@ export default function HabitItem({ habit, onToggle, onDelete }: HabitItemProps)
         {streak}
       </span>
 
-      <IconButton
-        icon={Trash2}
-        label="Xoá thói quen"
-        onClick={() => onDelete(habit.id)}
-        className="hidden hover:text-rose-500 group-hover:inline-flex"
-      />
+      <div className="flex items-center gap-0.5">
+        <IconButton
+          icon={Pencil}
+          label="Sửa thói quen"
+          onClick={startEdit}
+          className="pointer-events-none opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100"
+        />
+        <IconButton
+          icon={Trash2}
+          label="Xoá thói quen"
+          onClick={() => onDelete(habit.id)}
+          className="pointer-events-none opacity-0 transition-opacity hover:text-rose-500 group-hover:pointer-events-auto group-hover:opacity-100"
+        />
+      </div>
     </li>
   );
 }
