@@ -10,11 +10,13 @@ interface AddTaskInput {
   title: string;
   description: string;
   dueDate: string | null;
+  status?: TaskStatus;
 }
 
 type TasksByStatus = Record<TaskStatus, Task[]>;
 
 interface UseTasksResult {
+  tasks: Task[];
   tasksByStatus: TasksByStatus;
   isLoading: boolean;
   addTask: (input: AddTaskInput) => void;
@@ -56,15 +58,20 @@ export function useTasks(): UseTasksResult {
     migrateTasks,
   );
 
-  function addTask({ title, description, dueDate }: AddTaskInput): void {
+  function addTask({
+    title,
+    description,
+    dueDate,
+    status = "backlog",
+  }: AddTaskInput): void {
     const newTask: Task = {
       id: crypto.randomUUID(),
       title: title.trim(),
       description: description.trim(),
       dueDate,
-      status: "backlog",
+      status,
       createdAt: new Date().toISOString(),
-      completedAt: null,
+      completedAt: status === "done" ? new Date().toISOString() : null,
     };
 
     persist([newTask, ...tasks]);
@@ -92,6 +99,7 @@ export function useTasks(): UseTasksResult {
   }
 
   return {
+    tasks,
     tasksByStatus: groupByStatus(tasks),
     isLoading,
     addTask,

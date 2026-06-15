@@ -4,3 +4,5 @@ export { default as KanbanColumn } from "./kanban-column";
 export { default as TaskCard } from "./task-card";
 export { default as TodoToolbar } from "./todo-toolbar";
 export { default as TaskFormModal } from "./task-form-modal";
+export { default as CalendarView } from "./calendar-view";
+export { default as CalendarDayCell } from "./calendar-day-cell";

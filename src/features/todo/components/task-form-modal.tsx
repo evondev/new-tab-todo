@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -20,33 +20,48 @@ import {
 } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/utils/cn";
-import { formatIsoDate } from "@/utils/date";
+import { formatIsoDate, parseIsoDate } from "@/utils/date";
+import { KANBAN_COLUMNS } from "../constants/kanban-columns";
+import type { TaskStatus } from "../types/task";
 
 interface TaskFormValues {
   title: string;
   description: string;
   dueDate: string | null;
+  status: TaskStatus;
 }
 
 interface TaskFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (values: TaskFormValues) => void;
+  initialDate?: string | null;
 }
 
 const EMPTY_FIELDS = { title: "", description: "" };
+const DEFAULT_STATUS: TaskStatus = "backlog";
 
 export default function TaskFormModal({
   open,
   onOpenChange,
   onSubmit,
+  initialDate,
 }: TaskFormModalProps) {
   const [fields, setFields] = useState(EMPTY_FIELDS);
+  const [status, setStatus] = useState<TaskStatus>(DEFAULT_STATUS);
   const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
+  // Khi mở modal, điền sẵn ngày nếu được truyền vào (bấm ô ngày trong lịch).
+  useEffect(() => {
+    if (open) {
+      setDueDate(initialDate ? parseIsoDate(initialDate) : undefined);
+    }
+  }, [open, initialDate]);
+
   function resetForm(): void {
     setFields(EMPTY_FIELDS);
+    setStatus(DEFAULT_STATUS);
     setDueDate(undefined);
   }
 
@@ -79,6 +94,7 @@ export default function TaskFormModal({
       title: fields.title,
       description: fields.description,
       dueDate: dueDate ? formatIsoDate(dueDate) : null,
+      status,
     });
     resetForm();
     onOpenChange(false);
@@ -111,6 +127,34 @@ export default function TaskFormModal({
               onChange={handleDescriptionChange}
               placeholder="Chi tiết (tuỳ chọn)"
             />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Label>Cột</Label>
+            <div className="grid grid-cols-4 gap-2">
+              {KANBAN_COLUMNS.map((column) => {
+                const isActive = status === column.key;
+
+                return (
+                  <button
+                    key={column.key}
+                    type="button"
+                    onClick={() => setStatus(column.key)}
+                    className={cn(
+                      "inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-md border border-input px-2 py-2 text-xs font-medium transition-colors",
+                      isActive
+                        ? "text-foreground ring-2 ring-ring"
+                        : "text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    <span
+                      className={cn("h-2 w-2 rounded-full", column.dotClassName)}
+                    />
+                    {column.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           <div className="flex flex-col gap-2">

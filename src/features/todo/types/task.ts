@@ -1,5 +1,7 @@
 export type TaskStatus = "backlog" | "todo" | "doing" | "done";
 
+export type TaskView = "board" | "calendar";
+
 export interface Task {
   id: string;
   title: string;
