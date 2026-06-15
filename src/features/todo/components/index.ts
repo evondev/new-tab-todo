@@ -1,4 +1,6 @@
-export { default as GreetingClock } from "./greeting-clock";
+export { default as TodoWidget } from "./todo-widget";
+export { default as KanbanBoard } from "./kanban-board";
+export { default as KanbanColumn } from "./kanban-column";
+export { default as TaskCard } from "./task-card";
+export { default as TodoToolbar } from "./todo-toolbar";
 export { default as AddTaskForm } from "./add-task-form";
-export { default as TaskSection } from "./task-section";
-export { default as TaskItem } from "./task-item";

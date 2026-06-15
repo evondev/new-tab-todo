@@ -1,0 +1,39 @@
+import type { Task, TaskStatus } from "../types/task";
+
+interface LegacyTaskShape {
+  id?: string;
+  title?: string;
+  description?: string;
+  dueDate?: string | null;
+  isDone?: boolean;
+  status?: TaskStatus;
+  createdAt?: string;
+  completedAt?: string | null;
+}
+
+// Task cũ chỉ có `isDone` (không có `status`/`description`). Chuẩn hoá về model
+// mới khi load để tránh mất dữ liệu người dùng đang lưu.
+export function migrateTasks(loaded: Task[]): Task[] {
+  return loaded.map((task) => {
+    const legacy = task as unknown as LegacyTaskShape;
+
+    if (legacy.status) {
+      return {
+        ...task,
+        description: legacy.description ?? "",
+      };
+    }
+
+    const status: TaskStatus = legacy.isDone ? "done" : "todo";
+
+    return {
+      id: legacy.id ?? crypto.randomUUID(),
+      title: legacy.title ?? "",
+      description: legacy.description ?? "",
+      dueDate: legacy.dueDate ?? null,
+      status,
+      createdAt: legacy.createdAt ?? new Date().toISOString(),
+      completedAt: legacy.completedAt ?? null,
+    };
+  });
+}

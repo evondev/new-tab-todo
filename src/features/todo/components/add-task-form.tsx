@@ -1,54 +1,83 @@
 import { useState } from "react";
-import { Plus } from "lucide-react";
 import { Button } from "../../../components/button";
 
-interface AddTaskFormProps {
-  onAdd: (input: { title: string; dueDate: string | null }) => void;
+interface AddTaskFormValues {
+  title: string;
+  description: string;
+  dueDate: string | null;
 }
 
-export default function AddTaskForm({ onAdd }: AddTaskFormProps) {
-  const [fields, setFields] = useState({ title: "", dueDate: "" });
+interface AddTaskFormProps {
+  onAdd: (values: AddTaskFormValues) => void;
+  onCancel: () => void;
+}
+
+const INPUT_CLASS =
+  "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-(--accent) focus:outline-none";
+
+export default function AddTaskForm({ onAdd, onCancel }: AddTaskFormProps) {
+  const [fields, setFields] = useState({
+    title: "",
+    description: "",
+    dueDate: "",
+  });
+
+  function handleChange(
+    event: React.ChangeEvent<HTMLInputElement>,
+  ): void {
+    const { name, value } = event.target;
+    setFields((prev) => ({ ...prev, [name]: value }));
+  }
 
   function handleSubmit(event: React.SyntheticEvent<HTMLFormElement>): void {
     event.preventDefault();
 
-    const trimmedTitle = fields.title.trim();
-    if (!trimmedTitle) return;
+    if (!fields.title.trim()) return;
 
-    onAdd({ title: trimmedTitle, dueDate: fields.dueDate || null });
-    setFields({ title: "", dueDate: "" });
-  }
-
-  function handleTitleChange(event: React.ChangeEvent<HTMLInputElement>): void {
-    setFields((prev) => ({ ...prev, title: event.target.value }));
-  }
-
-  function handleDateChange(event: React.ChangeEvent<HTMLInputElement>): void {
-    setFields((prev) => ({ ...prev, dueDate: event.target.value }));
+    onAdd({
+      title: fields.title,
+      description: fields.description,
+      dueDate: fields.dueDate || null,
+    });
+    setFields({ title: "", description: "", dueDate: "" });
   }
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col gap-2 sm:flex-row sm:items-center"
+      className="mb-4 flex flex-col gap-2 rounded-xl bg-background p-3 ring-1 ring-border-card"
     >
       <input
-        type="text"
+        name="title"
         value={fields.title}
-        onChange={handleTitleChange}
-        placeholder="Hôm nay cần làm gì?"
-        className="flex-1 rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-slate-500 focus:border-indigo-400 focus:outline-none"
+        onChange={handleChange}
+        placeholder="Tên task"
+        autoFocus
+        className={INPUT_CLASS}
       />
       <input
-        type="date"
-        value={fields.dueDate}
-        onChange={handleDateChange}
-        className="rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-300 focus:border-indigo-400 focus:outline-none"
+        name="description"
+        value={fields.description}
+        onChange={handleChange}
+        placeholder="Mô tả (tuỳ chọn)"
+        className={INPUT_CLASS}
       />
-      <Button type="submit" disabled={!fields.title.trim()}>
-        <Plus size={16} />
-        Thêm
-      </Button>
+
+      <div className="flex items-center gap-2">
+        <input
+          type="date"
+          name="dueDate"
+          value={fields.dueDate}
+          onChange={handleChange}
+          className={INPUT_CLASS}
+        />
+        <Button type="submit" disabled={!fields.title.trim()}>
+          Thêm
+        </Button>
+        <Button type="button" variant="ghost" onClick={onCancel}>
+          Huỷ
+        </Button>
+      </div>
     </form>
   );
 }

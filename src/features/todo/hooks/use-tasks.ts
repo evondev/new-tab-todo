@@ -1,50 +1,68 @@
-import { useEffect, useState } from "react";
-import type { Task } from "../types/task";
-import { loadTasks, saveTasks } from "../utils/task-storage";
+import { useLocalState } from "../../../hooks/use-local-state";
+import { TASK_STATUS_ORDER } from "../constants/kanban-columns";
+import type { Task, TaskStatus } from "../types/task";
+import { migrateTasks } from "../utils/migrate-tasks";
+import { taskStorage } from "../utils/task-storage";
+
+type MoveDirection = "prev" | "next";
 
 interface AddTaskInput {
   title: string;
+  description: string;
   dueDate: string | null;
 }
 
+type TasksByStatus = Record<TaskStatus, Task[]>;
+
 interface UseTasksResult {
-  tasks: Task[];
+  tasksByStatus: TasksByStatus;
   isLoading: boolean;
   addTask: (input: AddTaskInput) => void;
-  toggleTask: (id: string) => void;
+  moveTask: (id: string, direction: MoveDirection) => void;
   deleteTask: (id: string) => void;
 }
 
-export function useTasks(): UseTasksResult {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+function groupByStatus(tasks: Task[]): TasksByStatus {
+  const grouped: TasksByStatus = {
+    backlog: [],
+    todo: [],
+    doing: [],
+    done: [],
+  };
 
-  useEffect(() => {
-    let isMounted = true;
-
-    loadTasks().then((loadedTasks) => {
-      if (!isMounted) return;
-
-      setTasks(loadedTasks);
-      setIsLoading(false);
-    });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  function persist(nextTasks: Task[]): void {
-    setTasks(nextTasks);
-    saveTasks(nextTasks);
+  for (const task of tasks) {
+    grouped[task.status].push(task);
   }
 
-  function addTask({ title, dueDate }: AddTaskInput): void {
+  return grouped;
+}
+
+function getAdjacentStatus(
+  status: TaskStatus,
+  direction: MoveDirection,
+): TaskStatus | null {
+  const currentIndex = TASK_STATUS_ORDER.indexOf(status);
+  const nextIndex = direction === "next" ? currentIndex + 1 : currentIndex - 1;
+
+  if (nextIndex < 0 || nextIndex >= TASK_STATUS_ORDER.length) return null;
+
+  return TASK_STATUS_ORDER[nextIndex];
+}
+
+export function useTasks(): UseTasksResult {
+  const [tasks, persist, isLoading] = useLocalState<Task[]>(
+    taskStorage,
+    [],
+    migrateTasks,
+  );
+
+  function addTask({ title, description, dueDate }: AddTaskInput): void {
     const newTask: Task = {
       id: crypto.randomUUID(),
       title: title.trim(),
+      description: description.trim(),
       dueDate,
-      isDone: false,
+      status: "backlog",
       createdAt: new Date().toISOString(),
       completedAt: null,
     };
@@ -52,16 +70,17 @@ export function useTasks(): UseTasksResult {
     persist([newTask, ...tasks]);
   }
 
-  function toggleTask(id: string): void {
+  function moveTask(id: string, direction: MoveDirection): void {
     const nextTasks = tasks.map((task) => {
       if (task.id !== id) return task;
 
-      const isDone = !task.isDone;
+      const nextStatus = getAdjacentStatus(task.status, direction);
+      if (!nextStatus) return task;
 
       return {
         ...task,
-        isDone,
-        completedAt: isDone ? new Date().toISOString() : null,
+        status: nextStatus,
+        completedAt: nextStatus === "done" ? new Date().toISOString() : null,
       };
     });
 
@@ -72,5 +91,11 @@ export function useTasks(): UseTasksResult {
     persist(tasks.filter((task) => task.id !== id));
   }
 
-  return { tasks, isLoading, addTask, toggleTask, deleteTask };
+  return {
+    tasksByStatus: groupByStatus(tasks),
+    isLoading,
+    addTask,
+    moveTask,
+    deleteTask,
+  };
 }

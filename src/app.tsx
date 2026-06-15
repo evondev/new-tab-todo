@@ -1,5 +1,5 @@
-import TodoPage from "./features/todo/pages/todo-page";
+import DashboardPage from "./features/dashboard/pages/dashboard-page";
 
 export default function App() {
-  return <TodoPage />;
+  return <DashboardPage />;
 }

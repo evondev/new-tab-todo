@@ -1,8 +1,3 @@
-export { loadTasks, saveTasks } from "./task-storage";
-export {
-  getTodayIso,
-  isToday,
-  isOverdue,
-  isUpcoming,
-  formatDueDate,
-} from "./task-date";
+export { taskStorage } from "./task-storage";
+export { isOverdue, formatDueBadge } from "./task-date";
+export { migrateTasks } from "./migrate-tasks";
