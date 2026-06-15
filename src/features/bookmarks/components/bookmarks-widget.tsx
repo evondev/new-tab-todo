@@ -1,31 +1,44 @@
-import { Bookmark as BookmarkIcon, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../../../components/button";
 import { WidgetCard } from "../../../components/widget-card";
 import { useBookmarks } from "../hooks/use-bookmarks";
-import type { BookmarkCategory } from "../types/bookmark";
+import type { Bookmark, BookmarkCategory } from "../types/bookmark";
 import BookmarkFormModal from "./bookmark-form-modal";
 import BookmarkItem from "./bookmark-item";
 import CategoryFilter from "./category-filter";
 
 export default function BookmarksWidget() {
-  const { bookmarks, isLoading, addBookmark, deleteBookmark } = useBookmarks();
-  const [activeCategory, setActiveCategory] = useState<BookmarkCategory | null>(
-    null,
-  );
+  const { bookmarks, isLoading, addBookmark, editBookmark, deleteBookmark } = useBookmarks();
+  const [activeCategory, setActiveCategory] = useState<BookmarkCategory | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingBookmark, setEditingBookmark] = useState<Bookmark | null>(null);
 
   const visibleBookmarks = activeCategory
     ? bookmarks.filter((bookmark) => bookmark.category === activeCategory)
     : bookmarks;
 
-  function handleAdd(values: Parameters<typeof addBookmark>[0]): void {
-    addBookmark(values);
+  function openCreateModal(): void {
+    setEditingBookmark(null);
+    setIsModalOpen(true);
+  }
+
+  function openEditModal(bookmark: Bookmark): void {
+    setEditingBookmark(bookmark);
+    setIsModalOpen(true);
+  }
+
+  function handleSubmit(values: Parameters<typeof addBookmark>[0]): void {
+    if (editingBookmark) {
+      editBookmark(editingBookmark.id, values);
+    } else {
+      addBookmark(values);
+    }
   }
 
   const addAction = (
     <Button
-      onClick={() => setIsModalOpen(true)}
+      onClick={openCreateModal}
       className="rounded-full px-3 py-1.5"
     >
       <Plus className="h-4 w-4" />
@@ -34,11 +47,12 @@ export default function BookmarksWidget() {
   );
 
   return (
-    <WidgetCard title="Bookmark" icon={<BookmarkIcon />} action={addAction}>
+    <WidgetCard title="Bookmark" icon={<img src="/icons/bookmark.png" alt="" width={20} height={20} className="h-5 w-5 object-contain" />} action={addAction}>
       <BookmarkFormModal
         open={isModalOpen}
         onOpenChange={setIsModalOpen}
-        onSubmit={handleAdd}
+        onSubmit={handleSubmit}
+        bookmark={editingBookmark}
       />
 
       <div className="mb-3">
@@ -57,6 +71,7 @@ export default function BookmarksWidget() {
             <BookmarkItem
               key={bookmark.id}
               bookmark={bookmark}
+              onEdit={openEditModal}
               onDelete={deleteBookmark}
             />
           ))}

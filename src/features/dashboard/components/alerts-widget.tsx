@@ -41,7 +41,7 @@ export default function AlertsWidget() {
       title="Quan trọng"
       icon={
         <img
-          src="/icons/bell.png"
+          src="/icons/star.png"
           alt=""
           width={20}
           height={20}

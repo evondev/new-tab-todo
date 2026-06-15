@@ -1,5 +1,5 @@
 import { IconButton } from "@/components/icon-button";
-import { Trash2 } from "lucide-react";
+import { Check, Copy, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { getCategoryLabel } from "../constants/categories";
 import type { Bookmark } from "../types/bookmark";
@@ -7,6 +7,7 @@ import { getFaviconUrl, getHostLabel } from "../utils/favicon-url";
 
 interface BookmarkItemProps {
   bookmark: Bookmark;
+  onEdit: (bookmark: Bookmark) => void;
   onDelete: (id: string) => void;
 }
 
@@ -25,12 +26,21 @@ function openBookmark(url: string): void {
 
 export default function BookmarkItem({
   bookmark,
+  onEdit,
   onDelete,
 }: BookmarkItemProps) {
   const [hasImageError, setHasImageError] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
   const faviconUrl = getFaviconUrl(bookmark.url);
   const showFallback = !faviconUrl || hasImageError;
   const isFileUrl = bookmark.url.startsWith("file://");
+
+  function handleCopy(): void {
+    navigator.clipboard.writeText(bookmark.url).then(() => {
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 1500);
+    });
+  }
 
   const favicon = showFallback ? (
     <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-border text-xs font-semibold text-muted">
@@ -77,6 +87,22 @@ export default function BookmarkItem({
       <span className="shrink-0 text-xs text-muted group-hover:hidden">
         {getCategoryLabel(bookmark.category)}
       </span>
+      <IconButton
+        icon={isCopied ? Check : Copy}
+        label="Copy URL"
+        onClick={handleCopy}
+        className={
+          isCopied
+            ? "hidden text-brand group-hover:inline-flex"
+            : "hidden group-hover:inline-flex"
+        }
+      />
+      <IconButton
+        icon={Pencil}
+        label="Sửa bookmark"
+        onClick={() => onEdit(bookmark)}
+        className="hidden group-hover:inline-flex"
+      />
       <IconButton
         icon={Trash2}
         label="Xoá bookmark"

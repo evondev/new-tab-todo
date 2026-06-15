@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { CATEGORY_OPTIONS } from "../constants/categories";
-import type { BookmarkCategory } from "../types/bookmark";
+import type { Bookmark, BookmarkCategory } from "../types/bookmark";
 
 interface BookmarkFormValues {
   name: string;
@@ -29,6 +29,7 @@ interface BookmarkFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (values: BookmarkFormValues) => void;
+  bookmark?: Bookmark | null;
 }
 
 const EMPTY_FIELDS: BookmarkFormValues = {
@@ -41,13 +42,21 @@ export default function BookmarkFormModal({
   open,
   onOpenChange,
   onSubmit,
+  bookmark,
 }: BookmarkFormModalProps) {
+  const isEdit = Boolean(bookmark);
   const [fields, setFields] = useState<BookmarkFormValues>(EMPTY_FIELDS);
 
   useEffect(() => {
     if (!open) return;
+
+    if (bookmark) {
+      setFields({ name: bookmark.name, url: bookmark.url, category: bookmark.category });
+      return;
+    }
+
     setFields(EMPTY_FIELDS);
-  }, [open]);
+  }, [open, bookmark]);
 
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>): void {
     const { name, value } = event.target;
@@ -73,7 +82,7 @@ export default function BookmarkFormModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Thêm bookmark</DialogTitle>
+          <DialogTitle>{isEdit ? "Sửa bookmark" : "Thêm bookmark"}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -131,7 +140,7 @@ export default function BookmarkFormModal({
               Huỷ
             </Button>
             <Button type="submit" disabled={!isValid}>
-              Thêm bookmark
+              {isEdit ? "Lưu" : "Thêm bookmark"}
             </Button>
           </DialogFooter>
         </form>

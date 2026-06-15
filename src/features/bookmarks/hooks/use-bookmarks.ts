@@ -14,6 +14,7 @@ interface UseBookmarksResult {
   bookmarks: Bookmark[];
   isLoading: boolean;
   addBookmark: (input: AddBookmarkInput) => void;
+  editBookmark: (id: string, input: AddBookmarkInput) => void;
   deleteBookmark: (id: string) => void;
 }
 
@@ -41,9 +42,19 @@ export function useBookmarks(): UseBookmarksResult {
     persist([...bookmarks, newBookmark]);
   }
 
+  function editBookmark(id: string, { name, url, category }: AddBookmarkInput): void {
+    persist(
+      bookmarks.map((bookmark) =>
+        bookmark.id === id
+          ? { ...bookmark, name: name.trim(), url: url.trim(), category }
+          : bookmark,
+      ),
+    );
+  }
+
   function deleteBookmark(id: string): void {
     persist(bookmarks.filter((bookmark) => bookmark.id !== id));
   }
 
-  return { bookmarks, isLoading, addBookmark, deleteBookmark };
+  return { bookmarks, isLoading, addBookmark, editBookmark, deleteBookmark };
 }
