@@ -1,5 +1,5 @@
 import { Check, Flame, Pencil, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { IconButton } from "../../../components/icon-button";
 import { cn } from "../../../utils/cn";
 import { getTodayIso } from "../../../utils/date";
@@ -20,10 +20,10 @@ export default function HabitItem({
   onRename,
   onDelete,
 }: HabitItemProps) {
-  const completedSet = new Set(habit.completedDates);
+  const completedSet = useMemo(() => new Set(habit.completedDates), [habit.completedDates]);
   const isDoneToday = completedSet.has(getTodayIso());
-  const streak = calcStreak(habit.completedDates);
-  const last7Days = getLast7Days();
+  const streak = useMemo(() => calcStreak(habit.completedDates), [habit.completedDates]);
+  const last7Days = useMemo(() => getLast7Days(), []);
 
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState(habit.name);

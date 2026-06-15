@@ -1,3 +1,4 @@
+import { useCallback, useMemo } from "react";
 import { useLocalState } from "../../../hooks/use-local-state";
 import { TASK_STATUS_ORDER } from "../constants/kanban-columns";
 import type { Task, TaskStatus } from "../types/task";
@@ -70,7 +71,9 @@ export function useTasks(): UseTasksResult {
     migrateTasks,
   );
 
-  function addTask({
+  const tasksByStatus = useMemo(() => groupByStatus(tasks), [tasks]);
+
+  const addTask = useCallback(function addTask({
     title,
     description,
     dueDate,
@@ -91,9 +94,10 @@ export function useTasks(): UseTasksResult {
     };
 
     persist([newTask, ...tasks]);
-  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tasks, persist]);
 
-  function editTask(
+  const editTask = useCallback(function editTask(
     id: string,
     { title, description, dueDate, dueTime, status, important }: EditTaskInput,
   ): void {
@@ -116,9 +120,10 @@ export function useTasks(): UseTasksResult {
         };
       }),
     );
-  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tasks, persist]);
 
-  function moveTask(id: string, direction: MoveDirection): void {
+  const moveTask = useCallback(function moveTask(id: string, direction: MoveDirection): void {
     const nextTasks = tasks.map((task) => {
       if (task.id !== id) return task;
 
@@ -133,15 +138,17 @@ export function useTasks(): UseTasksResult {
     });
 
     persist(nextTasks);
-  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tasks, persist]);
 
-  function deleteTask(id: string): void {
+  const deleteTask = useCallback(function deleteTask(id: string): void {
     persist(tasks.filter((task) => task.id !== id));
-  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tasks, persist]);
 
   return {
     tasks,
-    tasksByStatus: groupByStatus(tasks),
+    tasksByStatus,
     isLoading,
     addTask,
     editTask,

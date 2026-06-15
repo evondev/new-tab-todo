@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { WidgetCard } from "../../../components/widget-card";
 import { useTasks } from "../hooks/use-tasks";
 import type { Task, TaskView } from "../types/task";
@@ -22,25 +22,25 @@ export default function TodoWidget() {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [view, setView] = useState<TaskView>("board");
 
-  function openCreateModal(initialDate: string | null): void {
+  const openCreateModal = useCallback((initialDate: string | null): void => {
     setEditingTask(null);
     setModalDate(initialDate);
     setIsModalOpen(true);
-  }
+  }, []);
 
-  function openEditModal(task: Task): void {
+  const openEditModal = useCallback((task: Task): void => {
     setEditingTask(task);
     setModalDate(null);
     setIsModalOpen(true);
-  }
+  }, []);
 
-  function handleSubmit(values: Parameters<typeof addTask>[0]): void {
+  const handleSubmit = useCallback((values: Parameters<typeof addTask>[0]): void => {
     if (editingTask) {
       editTask(editingTask.id, { ...values, status: values.status ?? "backlog", important: values.important ?? false });
     } else {
       addTask(values);
     }
-  }
+  }, [editingTask, editTask, addTask]);
 
   return (
     <WidgetCard

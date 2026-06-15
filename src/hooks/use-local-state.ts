@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { Storage } from "../utils/create-storage";
 
 type UseLocalStateResult<T> = [T, (next: T) => void, boolean];
@@ -35,10 +35,10 @@ export function useLocalState<T>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function persist(next: T): void {
+  const persist = useCallback((next: T): void => {
     setValue(next);
     storageRef.current.save(next);
-  }
+  }, []);
 
   return [value, persist, isLoading];
 }

@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useLocalState } from "../../../hooks/use-local-state";
 import { createStorage } from "../../../utils/create-storage";
 import { daysFromToday } from "../../../utils/date";
@@ -91,8 +92,10 @@ export function useReminders(): UseRemindersResult {
     persist(reminders.filter((reminder) => reminder.id !== id));
   }
 
+  const sortedReminders = useMemo(() => sortByDue(reminders), [reminders]);
+
   return {
-    reminders: sortByDue(reminders),
+    reminders: sortedReminders,
     isLoading,
     addReminder,
     editReminder,
