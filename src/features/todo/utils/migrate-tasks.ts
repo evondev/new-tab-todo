@@ -1,4 +1,4 @@
-import type { Task, TaskStatus } from "../types/task";
+import type { Task, TaskScope, TaskStatus } from "../types/task";
 
 interface LegacyTaskShape {
   id?: string;
@@ -18,12 +18,15 @@ export function migrateTasks(loaded: Task[]): Task[] {
   return loaded.map((task) => {
     const legacy = task as unknown as LegacyTaskShape;
 
+    const knownTask = task as unknown as { important?: boolean; scope?: TaskScope };
+
     if (legacy.status) {
       return {
         ...task,
         description: legacy.description ?? "",
         dueTime: legacy.dueTime ?? null,
-        important: (task as unknown as { important?: boolean }).important ?? false,
+        important: knownTask.important ?? false,
+        scope: knownTask.scope ?? null,
       };
     }
 
@@ -37,6 +40,7 @@ export function migrateTasks(loaded: Task[]): Task[] {
       dueTime: legacy.dueTime ?? null,
       status,
       important: false,
+      scope: null,
       createdAt: legacy.createdAt ?? new Date().toISOString(),
       completedAt: legacy.completedAt ?? null,
     };

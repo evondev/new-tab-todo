@@ -146,27 +146,12 @@ body {
   text-transform: none;
 }
 
-/* Scrollbar mảnh, gọn (dùng cho kanban board). */
+/* Ẩn hoàn toàn scrollbar nhưng vẫn scroll được. */
 .scrollbar-clean {
-  scrollbar-width: thin;
-  scrollbar-color: color-mix(in srgb, var(--muted) 40%, transparent) transparent;
+  scrollbar-width: none;
 }
 
 .scrollbar-clean::-webkit-scrollbar {
-  height: 8px;
-  width: 8px;
-}
-
-.scrollbar-clean::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.scrollbar-clean::-webkit-scrollbar-thumb {
-  background-color: color-mix(in srgb, var(--muted) 32%, transparent);
-  border-radius: 9999px;
-}
-
-.scrollbar-clean:hover::-webkit-scrollbar-thumb {
-  background-color: color-mix(in srgb, var(--muted) 50%, transparent);
+  display: none;
 }
 

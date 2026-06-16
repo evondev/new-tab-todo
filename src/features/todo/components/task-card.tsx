@@ -49,18 +49,25 @@ export default function TaskCard({
         </p>
       )}
 
-      {task.dueDate && (
-        <span
-          className={cn(
-            "mt-2 flex w-fit items-center gap-1 rounded-md px-2 py-1 text-xs font-medium",
-            STATUS_CHIP_CLASS[task.status],
-          )}
-        >
-          <CalendarClock className="h-3 w-3 shrink-0" />
-          {formatDueBadge(task.dueDate)}
-          {task.dueTime && ` · ${task.dueTime}`}
-        </span>
-      )}
+      <div className="mt-2 flex flex-wrap gap-1.5">
+        {task.dueDate && (
+          <span
+            className={cn(
+              "flex w-fit items-center gap-1 rounded-md px-2 py-1 text-xs font-medium",
+              STATUS_CHIP_CLASS[task.status],
+            )}
+          >
+            <CalendarClock className="h-3 w-3 shrink-0" />
+            {formatDueBadge(task.dueDate)}
+            {task.dueTime && ` · ${task.dueTime}`}
+          </span>
+        )}
+        {task.scope && (
+          <span className="flex w-fit items-center rounded-md bg-orange-100 px-2 py-1 text-xs font-medium text-orange-600">
+            {task.scope === "week" ? "Tuần này" : "Tháng này"}
+          </span>
+        )}
+      </div>
 
       <div className="mt-2 flex items-center justify-end gap-0.5 border-t border-border-card pt-2">
         <IconButton icon={Pencil} label="Sửa task" onClick={() => onEdit(task)} />

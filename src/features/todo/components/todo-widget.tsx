@@ -36,7 +36,7 @@ export default function TodoWidget() {
 
   const handleSubmit = useCallback((values: Parameters<typeof addTask>[0]): void => {
     if (editingTask) {
-      editTask(editingTask.id, { ...values, status: values.status ?? "backlog", important: values.important ?? false });
+      editTask(editingTask.id, { ...values, status: values.status ?? "backlog", important: values.important ?? false, scope: values.scope ?? null });
     } else {
       addTask(values);
     }
@@ -54,7 +54,7 @@ export default function TodoWidget() {
           className="h-5 w-5 object-contain"
         />
       }
-      className="flex-1"
+      className="h-full flex-1"
       bodyClassName="flex min-h-0 flex-col"
       action={
         <TodoToolbar

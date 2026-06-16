@@ -2,7 +2,7 @@ import { daysFromToday, getTodayIso } from "../../../utils/date";
 import type { Reminder, ReminderPerson } from "../../reminders/types/reminder";
 import type { Task } from "../../todo/types/task";
 
-export type AlertTone = "overdue" | "today" | "soon";
+export type AlertTone = "overdue" | "today" | "soon" | "important" | "week" | "month";
 export type AlertSource = "todo" | "reminder";
 
 export interface AlertItem {
@@ -45,9 +45,46 @@ function reminderMessage(diff: number, title: string): string {
 export function buildAlerts(tasks: Task[], reminders: Reminder[]): AlertItem[] {
   const today = getTodayIso();
   const items: AlertItem[] = [];
+  const includedTaskIds = new Set<string>();
 
+  // Important tasks (any status except done) always appear
   for (const task of tasks) {
-    if (task.status === "done" || task.status === "backlog" || !task.dueDate) continue;
+    if (task.status === "done" || !task.important) continue;
+
+    includedTaskIds.add(task.id);
+
+    if (!task.dueDate) {
+      items.push({
+        key: `todo-${task.id}`,
+        source: "todo",
+        sourceId: task.id,
+        message: `Bạn nhớ: ${task.title}`,
+        person: null,
+        tone: "important",
+        diff: Infinity,
+        time: null,
+      });
+    } else {
+      const diff = daysFromToday(task.dueDate);
+
+      items.push({
+        key: `todo-${task.id}`,
+        source: "todo",
+        sourceId: task.id,
+        message: todoMessage(diff, task.title, task.dueTime),
+        person: null,
+        tone: toneOf(diff),
+        diff,
+        time: task.dueTime,
+      });
+    }
+  }
+
+  // Non-important tasks with upcoming due dates (existing window logic)
+  for (const task of tasks) {
+    if (task.status === "done" || task.status === "backlog" || !task.dueDate)
+      continue;
+    if (includedTaskIds.has(task.id)) continue;
 
     const diff = daysFromToday(task.dueDate);
     if (diff > TODO_WINDOW_DAYS) continue;
@@ -61,6 +98,25 @@ export function buildAlerts(tasks: Task[], reminders: Reminder[]): AlertItem[] {
       tone: toneOf(diff),
       diff,
       time: task.dueTime,
+    });
+  }
+
+  // Scoped tasks (week/month) — not done, not already included
+  for (const task of tasks) {
+    if (task.status === "done" || !task.scope) continue;
+    if (includedTaskIds.has(task.id)) continue;
+
+    const scopeLabel = task.scope === "week" ? "Tuần này" : "Tháng này";
+
+    items.push({
+      key: `todo-${task.id}`,
+      source: "todo",
+      sourceId: task.id,
+      message: `${scopeLabel} bạn cần: ${task.title}`,
+      person: null,
+      tone: task.scope,
+      diff: Infinity,
+      time: null,
     });
   }
 

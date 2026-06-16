@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
-import { CalendarIcon, Flame } from "lucide-react";
+import { CalendarIcon, Flame, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -22,7 +22,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/utils/cn";
 import { formatIsoDate, parseIsoDate } from "@/utils/date";
 import { KANBAN_COLUMNS } from "../constants/kanban-columns";
-import type { Task, TaskStatus } from "../types/task";
+import type { Task, TaskScope, TaskStatus } from "../types/task";
 
 interface TaskFormValues {
   title: string;
@@ -31,6 +31,7 @@ interface TaskFormValues {
   dueTime: string | null;
   status: TaskStatus;
   important: boolean;
+  scope: TaskScope;
 }
 
 interface TaskFormModalProps {
@@ -55,6 +56,7 @@ export default function TaskFormModal({
   const [fields, setFields] = useState(EMPTY_FIELDS);
   const [status, setStatus] = useState<TaskStatus>(DEFAULT_STATUS);
   const [isImportant, setIsImportant] = useState(false);
+  const [scope, setScope] = useState<TaskScope>(null);
   const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
   const [dueTime, setDueTime] = useState("");
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
@@ -68,6 +70,7 @@ export default function TaskFormModal({
       setFields({ title: task.title, description: task.description });
       setStatus(task.status);
       setIsImportant(task.important);
+      setScope(task.scope);
       setDueDate(task.dueDate ? parseIsoDate(task.dueDate) : undefined);
       setDueTime(task.dueTime ?? "");
       return;
@@ -76,6 +79,7 @@ export default function TaskFormModal({
     setFields(EMPTY_FIELDS);
     setStatus(DEFAULT_STATUS);
     setIsImportant(false);
+    setScope(null);
     setDueDate(initialDate ? parseIsoDate(initialDate) : undefined);
     setDueTime("");
   }, [open, task, initialDate]);
@@ -84,6 +88,7 @@ export default function TaskFormModal({
     setFields(EMPTY_FIELDS);
     setStatus(DEFAULT_STATUS);
     setIsImportant(false);
+    setScope(null);
     setDueDate(undefined);
     setDueTime("");
   }
@@ -120,6 +125,7 @@ export default function TaskFormModal({
       dueTime: dueDate && dueTime ? dueTime : null,
       status,
       important: isImportant,
+      scope,
     });
     resetForm();
     onOpenChange(false);
@@ -200,53 +206,97 @@ export default function TaskFormModal({
           </div>
 
           <div className="flex flex-col gap-2">
-            <Label>Ngày &amp; giờ hết hạn</Label>
+            <Label>Phạm vi thời gian</Label>
             <div className="flex gap-2">
-              <Popover
-                open={isDatePickerOpen}
-                onOpenChange={setIsDatePickerOpen}
-              >
-                <PopoverTrigger asChild>
-                  <Button
+              {(
+                [
+                  { value: null, label: "Không" },
+                  { value: "week", label: "Tuần này" },
+                  { value: "month", label: "Tháng này" },
+                ] as { value: TaskScope; label: string }[]
+              ).map(({ value, label }) => {
+                const isActive = scope === value;
+
+                return (
+                  <button
+                    key={String(value)}
                     type="button"
-                    variant="outline"
+                    onClick={() => setScope(value)}
                     className={cn(
-                      "flex-1 justify-start text-left font-normal",
-                      !dueDate && "text-muted-foreground",
+                      "inline-flex cursor-pointer items-center justify-center rounded-md border border-input px-3 py-2 text-xs font-medium transition-colors",
+                      isActive
+                        ? "text-foreground ring-2 ring-ring"
+                        : "text-muted-foreground hover:text-foreground",
                     )}
                   >
-                    <CalendarIcon />
-                    {dueDate
-                      ? format(dueDate, "EEEE, dd/MM/yyyy", { locale: vi })
-                      : "Chọn ngày (tuỳ chọn)"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent align="start">
-                  <Calendar
-                    mode="single"
-                    selected={dueDate}
-                    onSelect={handleDateSelect}
-                    locale={vi}
-                    autoFocus
-                  />
-                </PopoverContent>
-              </Popover>
-
-              <Input
-                type="time"
-                aria-label="Giờ hết hạn"
-                value={dueTime}
-                onChange={(event) => setDueTime(event.target.value)}
-                disabled={!dueDate}
-                className="w-32"
-              />
+                    {label}
+                  </button>
+                );
+              })}
             </div>
-            {dueDate && (
-              <p className="text-xs text-muted-foreground">
-                Có giờ thì Nhắc việc sẽ hiển thị giờ cụ thể.
-              </p>
-            )}
           </div>
+
+          {scope === null && (
+            <div className="flex flex-col gap-2">
+              <Label>Ngày &amp; giờ hết hạn</Label>
+              <div className="flex gap-2">
+                <Popover
+                  open={isDatePickerOpen}
+                  onOpenChange={setIsDatePickerOpen}
+                >
+                  <PopoverTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className={cn(
+                        "flex-1 justify-start text-left font-normal",
+                        !dueDate && "text-muted-foreground",
+                      )}
+                    >
+                      <CalendarIcon />
+                      {dueDate
+                        ? format(dueDate, "EEEE, dd/MM/yyyy", { locale: vi })
+                        : "Chọn ngày (tuỳ chọn)"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent align="start">
+                    <Calendar
+                      mode="single"
+                      selected={dueDate}
+                      onSelect={handleDateSelect}
+                      locale={vi}
+                      autoFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+
+                {dueDate && (
+                  <button
+                    type="button"
+                    onClick={() => { setDueDate(undefined); setDueTime(""); }}
+                    aria-label="Xoá ngày"
+                    className="inline-flex cursor-pointer items-center justify-center rounded-md border border-input px-2 text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+
+                <Input
+                  type="time"
+                  aria-label="Giờ hết hạn"
+                  value={dueTime}
+                  onChange={(event) => setDueTime(event.target.value)}
+                  disabled={!dueDate}
+                  className="w-32"
+                />
+              </div>
+              {dueDate && (
+                <p className="text-xs text-muted-foreground">
+                  Có giờ thì Nhắc việc sẽ hiển thị giờ cụ thể.
+                </p>
+              )}
+            </div>
+          )}
 
           <DialogFooter className="mt-2">
             <Button

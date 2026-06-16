@@ -46,19 +46,14 @@ export default function DashboardPage() {
         </header>
 
         <div className="grid flex-1 gap-3 lg:grid-cols-3">
-          <div className="flex flex-col gap-3 lg:col-span-2">
+          <div className="flex h-full flex-col lg:col-span-2">
             <TodoWidget />
-
-            <div className="grid gap-3 sm:grid-cols-2">
-              <RemindersWidget />
-              <HabitsWidget />
-            </div>
           </div>
+          <AlertsWidget />
 
-          <div className="flex flex-col gap-3">
-            <AlertsWidget />
-            <BookmarksWidget />
-          </div>
+          <RemindersWidget />
+          <HabitsWidget />
+          <BookmarksWidget />
         </div>
       </div>
 

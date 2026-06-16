@@ -33,6 +33,7 @@ export default function AlertsWidget() {
       dueTime: task.dueTime,
       status: "done",
       important: task.important,
+      scope: task.scope,
     });
   }
 
@@ -49,6 +50,7 @@ export default function AlertsWidget() {
         />
       }
       className="flex-1"
+      bodyClassName="scrollbar-clean overflow-y-auto"
     >
       {isLoading ? (
         <p className="py-6 text-center text-sm text-muted">Đang tải…</p>

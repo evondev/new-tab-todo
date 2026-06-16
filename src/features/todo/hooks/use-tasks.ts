@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useLocalState } from "../../../hooks/use-local-state";
 import { TASK_STATUS_ORDER } from "../constants/kanban-columns";
-import type { Task, TaskStatus } from "../types/task";
+import type { Task, TaskScope, TaskStatus } from "../types/task";
 import { migrateTasks } from "../utils/migrate-tasks";
 import { taskStorage } from "../utils/task-storage";
 
@@ -14,6 +14,7 @@ interface AddTaskInput {
   dueTime: string | null;
   status?: TaskStatus;
   important?: boolean;
+  scope?: TaskScope;
 }
 
 interface EditTaskInput {
@@ -23,6 +24,7 @@ interface EditTaskInput {
   dueTime: string | null;
   status: TaskStatus;
   important: boolean;
+  scope: TaskScope;
 }
 
 type TasksByStatus = Record<TaskStatus, Task[]>;
@@ -80,6 +82,7 @@ export function useTasks(): UseTasksResult {
     dueTime,
     status = "backlog",
     important = false,
+    scope = null,
   }: AddTaskInput): void {
     const newTask: Task = {
       id: crypto.randomUUID(),
@@ -89,6 +92,7 @@ export function useTasks(): UseTasksResult {
       dueTime: dueDate ? dueTime : null,
       status,
       important,
+      scope,
       createdAt: new Date().toISOString(),
       completedAt: status === "done" ? new Date().toISOString() : null,
     };
@@ -99,7 +103,7 @@ export function useTasks(): UseTasksResult {
 
   const editTask = useCallback(function editTask(
     id: string,
-    { title, description, dueDate, dueTime, status, important }: EditTaskInput,
+    { title, description, dueDate, dueTime, status, important, scope }: EditTaskInput,
   ): void {
     persist(
       tasks.map((task) => {
@@ -113,6 +117,7 @@ export function useTasks(): UseTasksResult {
           dueTime: dueDate ? dueTime : null,
           status,
           important,
+          scope,
           completedAt:
             status === "done"
               ? (task.completedAt ?? new Date().toISOString())

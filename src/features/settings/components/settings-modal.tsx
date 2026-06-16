@@ -43,7 +43,7 @@ export default function SettingsModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto">
+      <DialogContent className="scrollbar-clean max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Cài đặt</DialogTitle>
           <DialogDescription>
