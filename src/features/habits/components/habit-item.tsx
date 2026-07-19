@@ -12,6 +12,7 @@ interface HabitItemProps {
 
 export default function HabitItem({
   habit,
+  onToggle: _onToggle,
   onRename,
   onDelete,
 }: HabitItemProps) {
@@ -49,7 +50,7 @@ export default function HabitItem({
           type="button"
           onDoubleClick={startEdit}
           title={habit.name}
-          className="min-w-0 flex-1 cursor-text truncate text-left text-sm font-medium text-foreground"
+          className="min-w-0 flex-1 cursor-text truncate text-left text-sm font-medium text-foreground transition-colors"
         >
           {habit.name}
         </button>

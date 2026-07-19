@@ -1,22 +1,27 @@
-import { daysFromToday, getTodayIso } from "../../../utils/date";
+import { daysFromToday } from "../../../utils/date";
 import type { Reminder, ReminderPerson } from "../../reminders/types/reminder";
-import type { Task } from "../../todo/types/task";
+import type { Task, TaskScope } from "../../todo/types/task";
 
-export type AlertTone = "overdue" | "today" | "soon" | "important" | "week" | "month";
-export type AlertSource = "todo" | "reminder";
+export type AlertTone = "overdue" | "today" | "soon" | "important" | "week" | "month" | "reminder";
 
 export interface AlertItem {
   key: string;
-  source: AlertSource;
   sourceId: string;
   message: string;
-  person: ReminderPerson | null;
   tone: AlertTone;
   diff: number;
   time: string | null;
+  dueDate: string | null;
+  isImportant: boolean;
+  scope: TaskScope;
 }
 
-// Todo: hiện quá hạn + hôm nay + mai + mốt. Reminders: chỉ quá hạn + hôm nay.
+const PERSON_LABEL: Record<ReminderPerson, string> = {
+  me: "Tôi",
+  wife: "Vợ",
+  child: "Con",
+};
+
 const TODO_WINDOW_DAYS = 2;
 
 function toneOf(diff: number): AlertTone {
@@ -26,24 +31,12 @@ function toneOf(diff: number): AlertTone {
   return "soon";
 }
 
-function todoMessage(diff: number, title: string, time: string | null): string {
-  const at = time ? ` lúc ${time}` : "";
-
-  if (diff < 0) return `Quá hạn: ${title}`;
-  if (diff === 0) return `Hôm nay${at} bạn cần: ${title}`;
-  if (diff === 1) return `Ngày mai${at} bạn cần: ${title}`;
-
-  return `Ngày mốt${at} bạn cần: ${title}`;
+// Ngày đã hiện ở nhãn inline trong AlertItem nên message chỉ giữ tiêu đề + giờ.
+function todoMessage(title: string, time: string | null): string {
+  return time ? `${title} · ${time}` : title;
 }
 
-function reminderMessage(diff: number, title: string): string {
-  if (diff < 0) return `Quá hạn: ${title}`;
-
-  return `Hôm nay nhớ: ${title}`;
-}
-
-export function buildAlerts(tasks: Task[], reminders: Reminder[]): AlertItem[] {
-  const today = getTodayIso();
+export function buildAlerts(tasks: Task[], reminders: Reminder[] = []): AlertItem[] {
   const items: AlertItem[] = [];
   const includedTaskIds = new Set<string>();
 
@@ -56,31 +49,33 @@ export function buildAlerts(tasks: Task[], reminders: Reminder[]): AlertItem[] {
     if (!task.dueDate) {
       items.push({
         key: `todo-${task.id}`,
-        source: "todo",
         sourceId: task.id,
-        message: `Bạn nhớ: ${task.title}`,
-        person: null,
+        message: task.title,
         tone: "important",
         diff: Infinity,
         time: null,
+        dueDate: null,
+        isImportant: true,
+        scope: task.scope,
       });
     } else {
       const diff = daysFromToday(task.dueDate);
 
       items.push({
         key: `todo-${task.id}`,
-        source: "todo",
         sourceId: task.id,
-        message: todoMessage(diff, task.title, task.dueTime),
-        person: null,
+        message: todoMessage(task.title, task.dueTime),
         tone: toneOf(diff),
         diff,
         time: task.dueTime,
+        dueDate: task.dueDate,
+        isImportant: true,
+        scope: task.scope,
       });
     }
   }
 
-  // Non-important tasks with upcoming due dates (existing window logic)
+  // Non-important tasks with upcoming due dates
   for (const task of tasks) {
     if (task.status === "done" || task.status === "backlog" || !task.dueDate)
       continue;
@@ -91,13 +86,14 @@ export function buildAlerts(tasks: Task[], reminders: Reminder[]): AlertItem[] {
 
     items.push({
       key: `todo-${task.id}`,
-      source: "todo",
       sourceId: task.id,
-      message: todoMessage(diff, task.title, task.dueTime),
-      person: null,
+      message: todoMessage(task.title, task.dueTime),
       tone: toneOf(diff),
       diff,
       time: task.dueTime,
+      dueDate: task.dueDate,
+      isImportant: false,
+      scope: task.scope,
     });
   }
 
@@ -106,42 +102,52 @@ export function buildAlerts(tasks: Task[], reminders: Reminder[]): AlertItem[] {
     if (task.status === "done" || !task.scope) continue;
     if (includedTaskIds.has(task.id)) continue;
 
-    const scopeLabel = task.scope === "week" ? "Tuần này" : "Tháng này";
-
     items.push({
       key: `todo-${task.id}`,
-      source: "todo",
       sourceId: task.id,
-      message: `${scopeLabel} bạn cần: ${task.title}`,
-      person: null,
+      message: task.title,
       tone: task.scope,
       diff: Infinity,
       time: null,
+      dueDate: null,
+      isImportant: false,
+      scope: task.scope,
     });
   }
 
+  // Reminders due today or overdue that haven't been completed yet
   for (const reminder of reminders) {
-    if (reminder.lastCompletedDate === today) continue;
-
     const diff = daysFromToday(reminder.nextDueDate);
     if (diff > 0) continue;
 
+    const personLabel = PERSON_LABEL[reminder.person];
+
     items.push({
       key: `reminder-${reminder.id}`,
-      source: "reminder",
       sourceId: reminder.id,
-      message: reminderMessage(diff, reminder.title),
-      person: reminder.person,
-      tone: toneOf(diff),
+      message: `Hôm nay ${personLabel} chưa: ${reminder.title}`,
+      tone: "reminder",
       diff,
       time: null,
+      dueDate: null,
+      isImportant: false,
+      scope: null,
     });
   }
 
-  // Theo độ gấp (số ngày), cùng ngày thì việc có giờ sớm hơn lên trước.
+  // Thứ tự: quá hạn → hôm nay → ngày mai → important/scope → ngày mốt (cuối cùng).
+  function sortKey(item: AlertItem): number {
+    if (item.diff < 0) return 0;
+    if (item.diff === 0) return 1;
+    if (item.diff === 1) return 2;
+    if (!isFinite(item.diff)) return 3;
+
+    return 4;
+  }
+
   return items.sort(
     (first, second) =>
-      first.diff - second.diff ||
+      sortKey(first) - sortKey(second) ||
       (first.time ?? "99:99").localeCompare(second.time ?? "99:99"),
   );
 }

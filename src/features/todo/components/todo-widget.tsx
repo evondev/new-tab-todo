@@ -1,11 +1,22 @@
 import { useCallback, useState } from "react";
 import { WidgetCard } from "../../../components/widget-card";
 import { useTasks } from "../hooks/use-tasks";
-import type { Task, TaskView } from "../types/task";
+import type { Task, TaskStatus, TaskView } from "../types/task";
 import CalendarView from "./calendar-view";
 import KanbanBoard from "./kanban-board";
 import TaskFormModal from "./task-form-modal";
 import TodoToolbar from "./todo-toolbar";
+
+const HIDDEN_COLUMNS_KEY = "hiddenKanbanColumns";
+
+function loadHiddenColumns(): Set<TaskStatus> {
+  try {
+    const stored = localStorage.getItem(HIDDEN_COLUMNS_KEY);
+    if (stored) return new Set(JSON.parse(stored) as TaskStatus[]);
+  } catch {}
+
+  return new Set();
+}
 
 export default function TodoWidget() {
   const {
@@ -21,6 +32,7 @@ export default function TodoWidget() {
   const [modalDate, setModalDate] = useState<string | null>(null);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [view, setView] = useState<TaskView>("board");
+  const [hiddenColumns, setHiddenColumns] = useState<Set<TaskStatus>>(loadHiddenColumns);
 
   const openCreateModal = useCallback((initialDate: string | null): void => {
     setEditingTask(null);
@@ -32,6 +44,22 @@ export default function TodoWidget() {
     setEditingTask(task);
     setModalDate(null);
     setIsModalOpen(true);
+  }, []);
+
+  const toggleColumn = useCallback((status: TaskStatus): void => {
+    setHiddenColumns((prev) => {
+      const next = new Set(prev);
+      if (next.has(status)) {
+        next.delete(status);
+      } else {
+        next.add(status);
+      }
+      try {
+        localStorage.setItem(HIDDEN_COLUMNS_KEY, JSON.stringify([...next]));
+      } catch {}
+
+      return next;
+    });
   }, []);
 
   const handleSubmit = useCallback((values: Parameters<typeof addTask>[0]): void => {
@@ -59,7 +87,9 @@ export default function TodoWidget() {
       action={
         <TodoToolbar
           view={view}
+          hiddenColumns={hiddenColumns}
           onViewChange={setView}
+          onToggleColumn={toggleColumn}
           onAddClick={() => openCreateModal(null)}
         />
       }
@@ -69,6 +99,7 @@ export default function TodoWidget() {
       ) : view === "board" ? (
         <KanbanBoard
           tasksByStatus={tasksByStatus}
+          hiddenColumns={hiddenColumns}
           onMove={moveTask}
           onEdit={openEditModal}
           onDelete={deleteTask}

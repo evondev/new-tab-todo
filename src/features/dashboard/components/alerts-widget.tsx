@@ -2,40 +2,15 @@ import { useMemo } from "react";
 import { WidgetCard } from "../../../components/widget-card";
 import { useReminders } from "../../reminders/hooks/use-reminders";
 import { useTasks } from "../../todo/hooks/use-tasks";
-import { buildAlerts, type AlertItem as AlertItemData } from "../utils/build-alerts";
+import { buildAlerts } from "../utils/build-alerts";
 import AlertItem from "./alert-item";
 
 export default function AlertsWidget() {
-  const { tasks, isLoading: tasksLoading, editTask } = useTasks();
-  const { reminders, isLoading: remindersLoading, completeToday } =
-    useReminders();
+  const { tasks, isLoading: isTasksLoading } = useTasks();
+  const { reminders, isLoading: isRemindersLoading } = useReminders();
 
-  const alerts = useMemo(
-    () => buildAlerts(tasks, reminders),
-    [tasks, reminders],
-  );
-
-  const isLoading = tasksLoading || remindersLoading;
-
-  function handleDone(item: AlertItemData): void {
-    if (item.source === "reminder") {
-      completeToday(item.sourceId);
-      return;
-    }
-
-    const task = tasks.find((current) => current.id === item.sourceId);
-    if (!task) return;
-
-    editTask(task.id, {
-      title: task.title,
-      description: task.description,
-      dueDate: task.dueDate,
-      dueTime: task.dueTime,
-      status: "done",
-      important: task.important,
-      scope: task.scope,
-    });
-  }
+  const isLoading = isTasksLoading || isRemindersLoading;
+  const alerts = useMemo(() => buildAlerts(tasks, reminders), [tasks, reminders]);
 
   return (
     <WidgetCard
@@ -61,7 +36,7 @@ export default function AlertsWidget() {
       ) : (
         <ul className="flex flex-col">
           {alerts.map((item) => (
-            <AlertItem key={item.key} item={item} onDone={handleDone} />
+            <AlertItem key={item.key} item={item} />
           ))}
         </ul>
       )}

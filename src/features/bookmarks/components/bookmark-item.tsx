@@ -17,7 +17,7 @@ function openBookmark(url: string): void {
     typeof chrome !== "undefined" &&
     chrome.tabs
   ) {
-    chrome.tabs.create({ url });
+    chrome.tabs.update({ url });
     return;
   }
 
