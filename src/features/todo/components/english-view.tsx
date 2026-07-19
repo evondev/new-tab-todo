@@ -1,8 +1,7 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useMemo, useState } from "react";
 import { IconButton } from "../../../components/icon-button";
-import type { Task } from "../types/task";
-import CalendarDayCell from "./calendar-day-cell";
+import { getTodayIso } from "../../../utils/date";
 import {
   getMonthLabel,
   getMonthMatrix,
@@ -10,27 +9,11 @@ import {
   getPreviousMonth,
   WEEKDAY_HEADERS,
 } from "../../../utils/calendar-month";
+import { useEnglishStreak } from "../hooks/use-english-streak";
+import StreakDayCell from "./streak-day-cell";
 
-interface CalendarViewProps {
-  tasks: Task[];
-  onSelectDate: (iso: string) => void;
-}
-
-function groupTasksByDate(tasks: Task[]): Record<string, Task[]> {
-  const map: Record<string, Task[]> = {};
-
-  for (const task of tasks) {
-    if (!task.dueDate) continue;
-    (map[task.dueDate] ??= []).push(task);
-  }
-
-  return map;
-}
-
-export default function CalendarView({
-  tasks,
-  onSelectDate,
-}: CalendarViewProps) {
+export default function EnglishView() {
+  const { activeDays, streak, isLoading, toggleDay } = useEnglishStreak();
   const now = new Date();
   const [current, setCurrent] = useState({
     year: now.getFullYear(),
@@ -41,14 +24,32 @@ export default function CalendarView({
     () => getMonthMatrix(current.year, current.month),
     [current],
   );
-  const tasksByDate = useMemo(() => groupTasksByDate(tasks), [tasks]);
+  // Chuỗi ISO "YYYY-MM-DD" so sánh từ điển được, không cần parse ra Date.
+  const todayIso = getTodayIso();
+
+  if (isLoading) {
+    return <p className="py-10 text-center text-sm text-muted">Đang tải…</p>;
+  }
 
   return (
     <div className="flex flex-col">
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-base font-semibold text-foreground">
-          {getMonthLabel(current.year, current.month)}
-        </h3>
+        <div className="flex items-center gap-2">
+          <h3 className="text-base font-semibold text-foreground">
+            {getMonthLabel(current.year, current.month)}
+          </h3>
+          <span className="inline-flex items-center gap-1 rounded-full bg-orange-100 px-2.5 py-1 text-xs font-semibold text-orange-700 dark:bg-orange-500/15 dark:text-orange-300">
+            <img
+              src="/icons/streak.png"
+              alt=""
+              width={14}
+              height={14}
+              className="h-3.5 w-3.5 object-contain"
+            />
+            {streak} ngày
+          </span>
+        </div>
+
         <div className="flex items-center gap-1">
           <IconButton
             icon={ChevronLeft}
@@ -82,11 +83,12 @@ export default function CalendarView({
 
       <div className="grid grid-cols-7 gap-2">
         {cells.map((cell) => (
-          <CalendarDayCell
+          <StreakDayCell
             key={cell.iso}
             cell={cell}
-            tasks={tasksByDate[cell.iso] ?? []}
-            onSelect={onSelectDate}
+            isActive={activeDays.has(cell.iso)}
+            isFuture={cell.iso > todayIso}
+            onToggle={toggleDay}
           />
         ))}
       </div>

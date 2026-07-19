@@ -1,10 +1,11 @@
 import { useMemo } from "react";
 import { useLocalState } from "../../../hooks/use-local-state";
 import { createStorage } from "../../../utils/create-storage";
-import { daysFromToday } from "../../../utils/date";
+import { daysFromToday, getTodayIso } from "../../../utils/date";
 import { REMINDERS_STORAGE_KEY } from "../constants/storage-keys";
 import type { Reminder, ReminderPerson, ReminderUnit } from "../types/reminder";
-import { completeReminder } from "../utils/recurrence";
+import { migrateReminders } from "../utils/migrate-reminders";
+import { completeReminder, undoReminder } from "../utils/recurrence";
 
 interface ReminderInput {
   title: string;
@@ -19,7 +20,7 @@ interface UseRemindersResult {
   isLoading: boolean;
   addReminder: (input: ReminderInput) => void;
   editReminder: (id: string, input: ReminderInput) => void;
-  completeToday: (id: string) => void;
+  toggleToday: (id: string) => void;
   deleteReminder: (id: string) => void;
 }
 
@@ -37,6 +38,7 @@ export function useReminders(): UseRemindersResult {
   const [reminders, persist, isLoading] = useLocalState<Reminder[]>(
     reminderStorage,
     [],
+    migrateReminders,
   );
 
   function addReminder({
@@ -54,6 +56,7 @@ export function useReminders(): UseRemindersResult {
       unit,
       nextDueDate: startDate,
       lastCompletedDate: null,
+      previousDueDate: null,
       createdAt: new Date().toISOString(),
     };
 
@@ -80,11 +83,17 @@ export function useReminders(): UseRemindersResult {
     );
   }
 
-  function completeToday(id: string): void {
+  function toggleToday(id: string): void {
+    const today = getTodayIso();
+
     persist(
-      reminders.map((reminder) =>
-        reminder.id === id ? completeReminder(reminder) : reminder,
-      ),
+      reminders.map((reminder) => {
+        if (reminder.id !== id) return reminder;
+
+        return reminder.lastCompletedDate === today
+          ? undoReminder(reminder)
+          : completeReminder(reminder);
+      }),
     );
   }
 
@@ -99,7 +108,7 @@ export function useReminders(): UseRemindersResult {
     isLoading,
     addReminder,
     editReminder,
-    completeToday,
+    toggleToday,
     deleteReminder,
   };
 }

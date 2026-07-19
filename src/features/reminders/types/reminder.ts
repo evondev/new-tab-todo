@@ -10,5 +10,6 @@ export interface Reminder {
   unit: ReminderUnit;
   nextDueDate: string; // ISO "YYYY-MM-DD" — lần tới cần làm
   lastCompletedDate: string | null;
+  previousDueDate: string | null; // ngày trước khi tick, để bỏ tick khôi phục đúng
   createdAt: string;
 }

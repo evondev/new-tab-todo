@@ -1,10 +1,15 @@
-import { Pencil, Trash2 } from "lucide-react";
+import { Check, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { IconButton } from "../../../components/icon-button";
+import { cn } from "../../../utils/cn";
 import type { Habit } from "../types/habit";
+import type { WeekDay } from "../utils/current-week";
+import HabitDots from "./habit-dots";
 
 interface HabitItemProps {
   habit: Habit;
+  weekDays: WeekDay[];
+  isDoneToday: boolean;
   onToggle: (id: string) => void;
   onRename: (id: string, name: string) => void;
   onDelete: (id: string) => void;
@@ -12,7 +17,9 @@ interface HabitItemProps {
 
 export default function HabitItem({
   habit,
-  onToggle: _onToggle,
+  weekDays,
+  isDoneToday,
+  onToggle,
   onRename,
   onDelete,
 }: HabitItemProps) {
@@ -36,6 +43,23 @@ export default function HabitItem({
 
   return (
     <li className="group flex items-center gap-3 rounded-lg px-1 py-2">
+      <button
+        type="button"
+        role="checkbox"
+        aria-checked={isDoneToday}
+        aria-label={`Đánh dấu hôm nay: ${habit.name}`}
+        title={isDoneToday ? "Bỏ đánh dấu hôm nay" : "Đánh dấu đã làm hôm nay"}
+        onClick={() => onToggle(habit.id)}
+        className={cn(
+          "inline-flex h-4.5 w-4.5 shrink-0 cursor-pointer items-center justify-center rounded-md border transition-colors",
+          "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+          isDoneToday && "border-emerald-500 bg-emerald-500 text-white",
+          !isDoneToday && "border-input hover:border-emerald-500",
+        )}
+      >
+        {isDoneToday && <Check className="h-3 w-3" strokeWidth={3} />}
+      </button>
+
       {isEditing ? (
         <input
           value={draft}
@@ -55,6 +79,8 @@ export default function HabitItem({
           {habit.name}
         </button>
       )}
+
+      <HabitDots weekDays={weekDays} completedDates={habit.completedDates} />
 
       <div className="flex items-center gap-0.5">
         <IconButton

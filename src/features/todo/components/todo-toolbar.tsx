@@ -1,4 +1,4 @@
-import { CalendarDays, Columns3, LayoutList, Plus } from "lucide-react";
+import { CalendarDays, Columns3, Flame, LayoutList, Plus } from "lucide-react";
 import { useState } from "react";
 import {
   Popover,
@@ -27,6 +27,7 @@ interface ViewOption {
 const VIEW_OPTIONS: ViewOption[] = [
   { key: "board", label: "Board", icon: LayoutList },
   { key: "calendar", label: "Lịch", icon: CalendarDays },
+  { key: "english", label: "English", icon: Flame },
 ];
 
 export default function TodoToolbar({

@@ -2,7 +2,7 @@ export type TaskStatus = "backlog" | "todo" | "doing" | "done";
 
 export type TaskScope = "week" | "month" | null;
 
-export type TaskView = "board" | "calendar";
+export type TaskView = "board" | "calendar" | "english";
 
 export interface Task {
   id: string;

@@ -1,4 +1,4 @@
-import { addDays, formatIsoDate, getTodayIso } from "../../../utils/date";
+import { addDays, formatIsoDate, getTodayIso } from "./date";
 
 // Đếm chuỗi ngày liên tiếp tính tới hôm nay. Nếu hôm nay chưa tick nhưng hôm
 // qua có thì vẫn tính từ hôm qua (chưa mất streak cho tới khi lỡ trọn 1 ngày).

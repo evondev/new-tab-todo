@@ -1,4 +1,4 @@
-import { addDays, formatIsoDate, getTodayIso } from "../../../utils/date";
+import { addDays, formatIsoDate, getTodayIso } from "./date";
 
 export const WEEKDAY_HEADERS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
 

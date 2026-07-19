@@ -3,6 +3,7 @@ import { WidgetCard } from "../../../components/widget-card";
 import { useTasks } from "../hooks/use-tasks";
 import type { Task, TaskStatus, TaskView } from "../types/task";
 import CalendarView from "./calendar-view";
+import EnglishView from "./english-view";
 import KanbanBoard from "./kanban-board";
 import TaskFormModal from "./task-form-modal";
 import TodoToolbar from "./todo-toolbar";
@@ -104,8 +105,10 @@ export default function TodoWidget() {
           onEdit={openEditModal}
           onDelete={deleteTask}
         />
-      ) : (
+      ) : view === "calendar" ? (
         <CalendarView tasks={tasks} onSelectDate={openCreateModal} />
+      ) : (
+        <EnglishView />
       )}
 
       <TaskFormModal

@@ -43,7 +43,7 @@ interface TaskFormModalProps {
 }
 
 const EMPTY_FIELDS = { title: "", description: "" };
-const DEFAULT_STATUS: TaskStatus = "backlog";
+const DEFAULT_STATUS: TaskStatus = "todo";
 
 export default function TaskFormModal({
   open,

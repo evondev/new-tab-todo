@@ -1,11 +1,17 @@
+import { useMemo } from "react";
 import { WidgetCard } from "../../../components/widget-card";
+import { getTodayIso } from "../../../utils/date";
 import { useHabits } from "../hooks/use-habits";
+import { getCurrentWeekDays } from "../utils/current-week";
 import AddHabitForm from "./add-habit-form";
 import HabitItem from "./habit-item";
 
 export default function HabitsWidget() {
   const { habits, isLoading, addHabit, renameHabit, toggleToday, deleteHabit } =
     useHabits();
+
+  const weekDays = useMemo(() => getCurrentWeekDays(), []);
+  const todayIso = getTodayIso();
 
   return (
     <WidgetCard
@@ -28,11 +34,13 @@ export default function HabitsWidget() {
           Chưa có thói quen nào
         </p>
       ) : (
-        <ul className="mb-3 flex flex-1 flex-col">
+        <ul className="scrollbar-clean mb-3 flex max-h-72 min-h-0 flex-1 flex-col overflow-y-auto">
           {habits.map((habit) => (
             <HabitItem
               key={habit.id}
               habit={habit}
+              weekDays={weekDays}
+              isDoneToday={habit.completedDates.includes(todayIso)}
               onToggle={toggleToday}
               onRename={renameHabit}
               onDelete={deleteHabit}

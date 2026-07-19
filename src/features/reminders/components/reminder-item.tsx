@@ -8,7 +8,7 @@ import { getCadenceLabel, getDueLabel, getDueTone } from "../utils/recurrence";
 
 interface ReminderItemProps {
   reminder: Reminder;
-  onComplete: (id: string) => void;
+  onToggle: (id: string) => void;
   onEdit: (reminder: Reminder) => void;
   onDelete: (id: string) => void;
 }
@@ -21,7 +21,7 @@ const DUE_TONE_CLASS = {
 
 export default function ReminderItem({
   reminder,
-  onComplete,
+  onToggle,
   onEdit,
   onDelete,
 }: ReminderItemProps) {
@@ -30,23 +30,24 @@ export default function ReminderItem({
 
   const isDoneToday = reminder.lastCompletedDate === getTodayIso();
   const isDue = daysFromToday(reminder.nextDueDate) <= 0;
-  const canComplete = !isDoneToday && isDue;
+  // Đã tick thì luôn cho bấm lại để bỏ tick (kể cả khi lần tới đã dời đi xa).
+  const canToggle = isDoneToday || isDue;
 
   return (
     <li className="group flex items-center gap-3 rounded-lg px-1 py-2 hover:bg-background">
       <IconButton
         icon={Check}
-        label={isDoneToday ? "Đã xong hôm nay" : "Đánh dấu đã làm"}
-        disabled={!canComplete}
-        onClick={() => onComplete(reminder.id)}
+        label={isDoneToday ? "Bỏ đánh dấu đã làm" : "Đánh dấu đã làm"}
+        disabled={!canToggle}
+        onClick={() => onToggle(reminder.id)}
         className={cn(
           "h-6 w-6 rounded-full border",
           isDoneToday &&
-            "border-emerald-500 bg-emerald-500 text-white disabled:opacity-100",
-          canComplete &&
-            "border-brand text-brand hover:bg-brand hover:text-white",
+            "border-emerald-500 bg-emerald-500 text-white hover:bg-emerald-600 hover:text-white",
           !isDoneToday &&
-            !canComplete &&
+            canToggle &&
+            "border-brand text-brand hover:bg-brand hover:text-white",
+          !canToggle &&
             "border-muted text-transparent disabled:hover:bg-transparent",
         )}
       />

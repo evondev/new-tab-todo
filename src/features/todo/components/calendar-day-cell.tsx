@@ -1,7 +1,7 @@
 import { cn } from "../../../utils/cn";
 import { STATUS_CHIP_CLASS } from "../constants/kanban-columns";
 import type { Task } from "../types/task";
-import type { CalendarCell } from "../utils/calendar-month";
+import type { CalendarCell } from "../../../utils/calendar-month";
 
 interface CalendarDayCellProps {
   cell: CalendarCell;

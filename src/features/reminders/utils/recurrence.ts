@@ -32,7 +32,27 @@ export function completeReminder(reminder: Reminder): Reminder {
     next = addInterval(getTodayIso(), reminder.interval, reminder.unit);
   }
 
-  return { ...reminder, nextDueDate: next, lastCompletedDate: getTodayIso() };
+  return {
+    ...reminder,
+    nextDueDate: next,
+    lastCompletedDate: getTodayIso(),
+    previousDueDate: reminder.nextDueDate,
+  };
+}
+
+// Bỏ tick → trả về đúng ngày trước đó. Nhắc cũ (lưu trước khi có
+// previousDueDate) thì lùi lại 1 chu kỳ — gần đúng nhưng không có gì tốt hơn.
+export function undoReminder(reminder: Reminder): Reminder {
+  const restored =
+    reminder.previousDueDate ??
+    addInterval(reminder.nextDueDate, -reminder.interval, reminder.unit);
+
+  return {
+    ...reminder,
+    nextDueDate: restored,
+    lastCompletedDate: null,
+    previousDueDate: null,
+  };
 }
 
 export function getDueTone(nextDueDate: string): DueTone {

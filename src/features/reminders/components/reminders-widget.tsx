@@ -14,7 +14,7 @@ export default function RemindersWidget() {
     isLoading,
     addReminder,
     editReminder,
-    completeToday,
+    toggleToday,
     deleteReminder,
   } = useReminders();
   const [activePerson, setActivePerson] = useState<ReminderPerson | null>(null);
@@ -80,7 +80,7 @@ export default function RemindersWidget() {
             <ReminderItem
               key={reminder.id}
               reminder={reminder}
-              onComplete={completeToday}
+              onToggle={toggleToday}
               onEdit={openEditModal}
               onDelete={deleteReminder}
             />

@@ -6,3 +6,5 @@ export { default as TodoToolbar } from "./todo-toolbar";
 export { default as TaskFormModal } from "./task-form-modal";
 export { default as CalendarView } from "./calendar-view";
 export { default as CalendarDayCell } from "./calendar-day-cell";
+export { default as EnglishView } from "./english-view";
+export { default as StreakDayCell } from "./streak-day-cell";
