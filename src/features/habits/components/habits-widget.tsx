@@ -34,7 +34,7 @@ export default function HabitsWidget() {
           Chưa có thói quen nào
         </p>
       ) : (
-        <ul className="scrollbar-clean mb-3 flex max-h-72 min-h-0 flex-1 flex-col overflow-y-auto">
+        <ul className="mb-3 flex flex-1 flex-col">
           {habits.map((habit) => (
             <HabitItem
               key={habit.id}

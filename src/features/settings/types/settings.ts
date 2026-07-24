@@ -1,4 +1,6 @@
-export type ThemeMode = "light" | "dark";
+export type ThemeMode = "light" | "dark" | "auto";
+
+export type ResolvedTheme = "light" | "dark";
 
 export type AccentColorKey =
   | "emerald"

@@ -1,4 +1,4 @@
-import { Moon, Sun } from "lucide-react";
+import { Moon, MoonStar, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -29,6 +29,7 @@ interface ThemeOption {
 const THEME_OPTIONS: ThemeOption[] = [
   { key: "light", label: "Sáng", icon: Sun },
   { key: "dark", label: "Tối", icon: Moon },
+  { key: "auto", label: "Tự động", icon: MoonStar },
 ];
 
 export default function SettingsModal({
@@ -63,7 +64,7 @@ export default function SettingsModal({
 
           <div className="flex flex-col gap-2">
             <Label>Giao diện</Label>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-3">
               {THEME_OPTIONS.map((option) => {
                 const isActive = settings.theme === option.key;
                 const Icon = option.icon;

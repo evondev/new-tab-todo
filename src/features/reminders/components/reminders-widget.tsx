@@ -17,13 +17,13 @@ export default function RemindersWidget() {
     toggleToday,
     deleteReminder,
   } = useReminders();
-  const [activePerson, setActivePerson] = useState<ReminderPerson | null>(null);
+  const [activePerson, setActivePerson] = useState<ReminderPerson>("me");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingReminder, setEditingReminder] = useState<Reminder | null>(null);
 
-  const visibleReminders = activePerson
-    ? reminders.filter((reminder) => reminder.person === activePerson)
-    : reminders;
+  const visibleReminders = reminders.filter(
+    (reminder) => reminder.person === activePerson,
+  );
 
   function openCreateModal(): void {
     setEditingReminder(null);
@@ -72,7 +72,7 @@ export default function RemindersWidget() {
         <p className="py-6 text-center text-sm text-muted">Đang tải…</p>
       ) : visibleReminders.length === 0 ? (
         <p className="py-6 text-center text-sm text-muted opacity-70">
-          Chưa có nhắc nào
+          Chưa có nhắc nào ở mục này
         </p>
       ) : (
         <ul className="flex flex-col">

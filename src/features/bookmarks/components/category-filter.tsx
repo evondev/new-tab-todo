@@ -3,8 +3,8 @@ import { CATEGORY_OPTIONS } from "../constants/categories";
 import type { BookmarkCategory } from "../types/bookmark";
 
 interface CategoryFilterProps {
-  active: BookmarkCategory | null;
-  onChange: (category: BookmarkCategory | null) => void;
+  active: BookmarkCategory;
+  onChange: (category: BookmarkCategory) => void;
 }
 
 export default function CategoryFilter({
@@ -13,11 +13,6 @@ export default function CategoryFilter({
 }: CategoryFilterProps) {
   return (
     <div className="flex flex-wrap gap-1.5">
-      <Chip
-        label="Tất cả"
-        isActive={active === null}
-        onClick={() => onChange(null)}
-      />
       {CATEGORY_OPTIONS.map((option) => (
         <Chip
           key={option.key}

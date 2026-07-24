@@ -3,18 +3,13 @@ import { PERSON_OPTIONS } from "../constants/reminder-options";
 import type { ReminderPerson } from "../types/reminder";
 
 interface PersonFilterProps {
-  active: ReminderPerson | null;
-  onChange: (person: ReminderPerson | null) => void;
+  active: ReminderPerson;
+  onChange: (person: ReminderPerson) => void;
 }
 
 export default function PersonFilter({ active, onChange }: PersonFilterProps) {
   return (
     <div className="flex flex-wrap gap-1.5">
-      <Chip
-        label="Tất cả"
-        isActive={active === null}
-        onClick={() => onChange(null)}
-      />
       {PERSON_OPTIONS.map((option) => (
         <Chip
           key={option.key}

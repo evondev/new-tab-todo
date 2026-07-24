@@ -6,6 +6,7 @@ import {
   SETTINGS_STORAGE_KEY,
   getAccentOption,
   getBackgroundUrl,
+  resolveTheme,
 } from "../constants/settings-options";
 import type { Settings } from "../types/settings";
 
@@ -32,7 +33,19 @@ export function useSettings(): UseSettingsResult {
   );
 
   useEffect(() => {
-    document.documentElement.classList.toggle("dark", settings.theme === "dark");
+    function applyTheme(): void {
+      const resolved = resolveTheme(settings.theme, new Date().getHours());
+      document.documentElement.classList.toggle("dark", resolved === "dark");
+    }
+
+    applyTheme();
+
+    // Chỉ mode auto mới cần theo dõi giờ để tự đổi sáng/tối.
+    if (settings.theme !== "auto") return;
+
+    const intervalId = window.setInterval(applyTheme, 60_000);
+
+    return () => window.clearInterval(intervalId);
   }, [settings.theme]);
 
   useEffect(() => {

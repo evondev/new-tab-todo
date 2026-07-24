@@ -10,13 +10,13 @@ import CategoryFilter from "./category-filter";
 
 export default function BookmarksWidget() {
   const { bookmarks, isLoading, addBookmark, editBookmark, deleteBookmark } = useBookmarks();
-  const [activeCategory, setActiveCategory] = useState<BookmarkCategory | null>(null);
+  const [activeCategory, setActiveCategory] = useState<BookmarkCategory>("daily");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingBookmark, setEditingBookmark] = useState<Bookmark | null>(null);
 
-  const visibleBookmarks = activeCategory
-    ? bookmarks.filter((bookmark) => bookmark.category === activeCategory)
-    : bookmarks;
+  const visibleBookmarks = bookmarks.filter(
+    (bookmark) => bookmark.category === activeCategory,
+  );
 
   function openCreateModal(): void {
     setEditingBookmark(null);
@@ -63,7 +63,7 @@ export default function BookmarksWidget() {
         <p className="py-6 text-center text-sm text-muted">Đang tải…</p>
       ) : visibleBookmarks.length === 0 ? (
         <p className="py-6 text-center text-sm text-muted opacity-70">
-          Chưa có bookmark nào
+          Chưa có bookmark nào ở mục này
         </p>
       ) : (
         <ul className="flex flex-col">

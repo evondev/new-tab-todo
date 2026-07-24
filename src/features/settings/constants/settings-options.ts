@@ -1,6 +1,8 @@
 import type {
   AccentColorKey,
+  ResolvedTheme,
   Settings,
+  ThemeMode,
 } from "../types/settings";
 
 export const SETTINGS_STORAGE_KEY = "settings";
@@ -53,4 +55,11 @@ export function getAccentOption(key: AccentColorKey): AccentOption {
 
 export function getBackgroundUrl(id: string): string | null {
   return BACKGROUND_OPTIONS.find((option) => option.id === id)?.url ?? null;
+}
+
+// Auto: ban ngày (6–17h) sáng, còn lại tối. light/dark thì giữ nguyên.
+export function resolveTheme(theme: ThemeMode, hour: number): ResolvedTheme {
+  if (theme === "light" || theme === "dark") return theme;
+
+  return hour >= 6 && hour < 18 ? "light" : "dark";
 }

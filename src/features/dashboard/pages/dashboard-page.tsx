@@ -8,6 +8,7 @@ import { RemindersWidget } from "../../reminders/components";
 import { useSettings } from "../../settings/hooks/use-settings";
 import { TodoWidget } from "../../todo/components";
 import AlertsWidget from "../components/alerts-widget";
+import GreetingHeader from "../components/greeting-header";
 
 const SettingsModal = lazy(() =>
   import("../../settings/components/settings-modal").then((module) => ({
@@ -30,11 +31,7 @@ export default function DashboardPage() {
         )}
       >
         <header className="mb-3 flex items-center justify-between rounded-full bg-surface p-2 px-4 ring-1 ring-border-card">
-          <div className="inline-flex items-center gap-2">
-            <h1 className="text-lg font-bold text-foreground">
-              {settings.boardName}
-            </h1>
-          </div>
+          <GreetingHeader name={settings.boardName} />
           <Button
             variant="primary"
             className="rounded-full"

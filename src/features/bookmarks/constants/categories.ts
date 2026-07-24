@@ -6,10 +6,13 @@ export interface CategoryOption {
 }
 
 // "Tất cả" dùng để bỏ lọc — tách riêng để value lọc có thể là null.
+// key giữ nguyên để không mất dữ liệu bookmark cũ; chỉ đổi label hiển thị.
 export const CATEGORY_OPTIONS: CategoryOption[] = [
-  { key: "daily", label: "Hằng ngày" },
-  { key: "study", label: "Học tập" },
-  { key: "entertainment", label: "Giải trí" },
+  { key: "daily", label: "Daily" },
+  { key: "study", label: "Study" },
+  { key: "reading", label: "Reading" },
+  { key: "listening", label: "Listening" },
+  { key: "entertainment", label: "Useful" },
 ];
 
 export function getCategoryLabel(category: BookmarkCategory): string {

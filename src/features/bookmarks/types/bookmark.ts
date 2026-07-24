@@ -1,4 +1,9 @@
-export type BookmarkCategory = "daily" | "study" | "entertainment";
+export type BookmarkCategory =
+  | "daily"
+  | "study"
+  | "reading"
+  | "listening"
+  | "entertainment";
 
 export interface Bookmark {
   id: string;
